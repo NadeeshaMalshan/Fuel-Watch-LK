@@ -104,7 +104,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
               <div className="mb-4">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Available Fuel Types</p>
                 <div className="flex flex-wrap gap-2">
-                  {station.fuelTypes.petrol92 && (
+                  {station.fuelTypes?.petrol92 && (
                     <div className={`
                       flex-1 min-w-[100px] px-4 py-3 rounded-xl text-sm font-medium border text-center
                       ${getStatusConfig(station.fuelTypes.petrol92).bgColor}
@@ -114,7 +114,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                       Petrol 92
                     </div>
                   )}
-                  {station.fuelTypes.petrol95 && (
+                  {station.fuelTypes?.petrol95 && (
                     <div className={`
                       flex-1 min-w-[100px] px-4 py-3 rounded-xl text-sm font-medium border text-center
                       ${getStatusConfig(station.fuelTypes.petrol95).bgColor}
@@ -124,7 +124,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                       Petrol 95
                     </div>
                   )}
-                  {station.fuelTypes.diesel && (
+                  {station.fuelTypes?.diesel && (
                     <div className={`
                       flex-1 min-w-[100px] px-4 py-3 rounded-xl text-sm font-medium border text-center
                       ${getStatusConfig(station.fuelTypes.diesel).bgColor}
@@ -134,7 +134,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                       Diesel
                     </div>
                   )}
-                  {station.fuelTypes.kerosene && (
+                  {station.fuelTypes?.kerosene && (
                     <div className={`
                       flex-1 min-w-[100px] px-4 py-3 rounded-xl text-sm font-medium border text-center
                       ${getStatusConfig(station.fuelTypes.kerosene).bgColor}
@@ -182,7 +182,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                     onConfirm(station.id);
                     onClose();
                   }}
-                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 px-4 rounded-xl bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   Confirm Status

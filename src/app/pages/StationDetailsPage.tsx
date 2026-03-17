@@ -1,16 +1,19 @@
-import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Users, Navigation, Share2, Fuel, TrendingUp } from 'lucide-react';
 import { mockStations, mockUpdates } from '../data/mockData';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import type { FuelStation, UserUpdate } from '../types';
 
 export function StationDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const station = mockStations.find(s => s.id === id);
+  const location = useLocation();
   
-  const stationUpdates = mockUpdates.filter(u => u.stationId === id);
+  // Try to get station from location state first, then fallback to mock data
+  const station = (location.state?.station as FuelStation) || mockStations.find((s: FuelStation) => s.id === id);
+  
+  const stationUpdates = mockUpdates.filter((u: UserUpdate) => u.stationId === id);
 
   if (!station) {
     return (
@@ -130,7 +133,7 @@ export function StationDetailsPage() {
                 <Users className="w-4 h-4 text-gray-600" />
                 <span className="text-xs font-medium text-gray-500">Queue Length</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{station.queueLength}</p>
+              <p className="text-2xl font-bold text-gray-900">{station.queueLength ?? '--'}</p>
               <p className="text-xs text-gray-500">vehicles</p>
             </div>
             <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
@@ -138,7 +141,7 @@ export function StationDetailsPage() {
                 <Clock className="w-4 h-4 text-gray-600" />
                 <span className="text-xs font-medium text-gray-500">Wait Time</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{station.waitingTime}</p>
+              <p className="text-2xl font-bold text-gray-900">{station.waitingTime ?? '--'}</p>
               <p className="text-xs text-gray-500">minutes</p>
             </div>
           </div>
@@ -171,7 +174,7 @@ export function StationDetailsPage() {
         <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Fuel Availability</h2>
           <div className="grid grid-cols-2 gap-3">
-            {station.fuelTypes.petrol92 && (
+            {station.fuelTypes?.petrol92 && (
               <div className={`p-4 rounded-xl border ${getStatusConfig(station.fuelTypes.petrol92).bgColor} ${getStatusConfig(station.fuelTypes.petrol92).borderColor}`}>
                 <p className="text-sm font-medium text-gray-700 mb-1">Petrol 92</p>
                 <p className={`text-lg font-bold ${getStatusConfig(station.fuelTypes.petrol92).textColor}`}>
@@ -179,7 +182,7 @@ export function StationDetailsPage() {
                 </p>
               </div>
             )}
-            {station.fuelTypes.petrol95 && (
+            {station.fuelTypes?.petrol95 && (
               <div className={`p-4 rounded-xl border ${getStatusConfig(station.fuelTypes.petrol95).bgColor} ${getStatusConfig(station.fuelTypes.petrol95).borderColor}`}>
                 <p className="text-sm font-medium text-gray-700 mb-1">Petrol 95</p>
                 <p className={`text-lg font-bold ${getStatusConfig(station.fuelTypes.petrol95).textColor}`}>
@@ -187,7 +190,7 @@ export function StationDetailsPage() {
                 </p>
               </div>
             )}
-            {station.fuelTypes.diesel && (
+            {station.fuelTypes?.diesel && (
               <div className={`p-4 rounded-xl border ${getStatusConfig(station.fuelTypes.diesel).bgColor} ${getStatusConfig(station.fuelTypes.diesel).borderColor}`}>
                 <p className="text-sm font-medium text-gray-700 mb-1">Diesel</p>
                 <p className={`text-lg font-bold ${getStatusConfig(station.fuelTypes.diesel).textColor}`}>
@@ -195,7 +198,7 @@ export function StationDetailsPage() {
                 </p>
               </div>
             )}
-            {station.fuelTypes.kerosene && (
+            {station.fuelTypes?.kerosene && (
               <div className={`p-4 rounded-xl border ${getStatusConfig(station.fuelTypes.kerosene).bgColor} ${getStatusConfig(station.fuelTypes.kerosene).borderColor}`}>
                 <p className="text-sm font-medium text-gray-700 mb-1">Kerosene</p>
                 <p className={`text-lg font-bold ${getStatusConfig(station.fuelTypes.kerosene).textColor}`}>
@@ -211,7 +214,7 @@ export function StationDetailsPage() {
           <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Community Updates</h2>
             <div className="space-y-3">
-              {stationUpdates.map((update) => (
+              {stationUpdates.map((update: UserUpdate) => (
                 <div key={update.id} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
                   <div className="flex items-start justify-between mb-2">
                     <div>

@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { FuelStation, FuelStatus } from '../types';
+import type { FuelStation } from '../types';
 
 interface MapViewProps {
   stations: FuelStation[];
   onStationClick: (station: FuelStation) => void;
   center: [number, number];
+  zoom?: number;
 }
 
-export function MapView({ stations, onStationClick, center }: MapViewProps) {
+export function MapView({ stations, onStationClick, center, zoom = 13 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -19,11 +20,20 @@ export function MapView({ stations, onStationClick, center }: MapViewProps) {
 
     // Initialize map only once
     if (!mapInstanceRef.current) {
-      mapInstanceRef.current = L.map(mapRef.current).setView(center, 13);
+      const sriLankaBounds: L.LatLngBoundsExpression = [
+        [5.8, 79.5], // South West
+        [9.9, 82.0], // North East
+      ];
+
+      mapInstanceRef.current = L.map(mapRef.current, {
+        maxBounds: sriLankaBounds,
+        maxBoundsViscosity: 1.0,
+        minZoom: 7,
+      }).setView(center, zoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
+        maxZoom: 18,
       }).addTo(mapInstanceRef.current);
     }
 
@@ -40,8 +50,8 @@ export function MapView({ stations, onStationClick, center }: MapViewProps) {
     if (!mapInstanceRef.current) return;
 
     // Update map center when location changes
-    mapInstanceRef.current.setView(center, 13);
-  }, [center]);
+    mapInstanceRef.current.setView(center, zoom);
+  }, [center, zoom]);
 
   useEffect(() => {
     if (!mapInstanceRef.current) return;
@@ -54,13 +64,13 @@ export function MapView({ stations, onStationClick, center }: MapViewProps) {
     const getMarkerColor = (status: string) => {
       switch (status) {
         case 'available':
-          return '#22c55e'; // green-500
+          return '#00C853'; // vibrant green-A700 (fuel available)
         case 'limited':
-          return '#f59e0b'; // amber-500
+          return '#FFAB00'; // vibrant amber-A700
         case 'out-of-stock':
-          return '#ef4444'; // red-500
+          return '#D50000'; // vibrant red-A700 (no fuel)
         default:
-          return '#6b7280'; // gray-500
+          return '#757575'; // gray
       }
     };
 

@@ -11,7 +11,7 @@ export function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/90 border-t border-gray-200/50 shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/90 border-t border-gray-200/50 shadow-lg lg:hidden">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-around py-3">
           {navItems.map((item) => {
