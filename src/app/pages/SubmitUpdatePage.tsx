@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, CheckCircle } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Send, CheckCircle, Home, PlusCircle, Activity, Settings } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import { fetchFuelStations } from '../services/osmService';
 import type { FuelStation, FuelStatus, SubmitUpdateForm } from '../types';
 import { toast } from 'sonner';
 import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
+import { MapView } from '../components/MapView';
 
 export function SubmitUpdatePage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stations, setStations] = useState<FuelStation[]>([]);
   const [formData, setFormData] = useState<SubmitUpdateForm>({
@@ -76,7 +79,9 @@ export function SubmitUpdatePage() {
               : value === 'out-of-stock'
               ? 'bg-red-500 text-white border-red-500'
               : 'bg-gray-500 text-white border-gray-500'
-            : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
+            : theme === 'dark'
+              ? 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-600'
+              : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
           }
         `}
       >
@@ -86,30 +91,31 @@ export function SubmitUpdatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-24">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200/50 shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4">
+    <div className={`flex flex-col lg:flex-row h-screen lg:h-screen overflow-hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] text-white' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'}`}>
+      
+      {/* Left Panel - Contains Form */}
+      <aside className={`flex flex-col w-full lg:w-[400px] xl:w-[450px] lg:h-full backdrop-blur-2xl border-r z-40 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a]/80 border-[#2a2a2a]' : 'bg-white/40 backdrop-blur-2xl border-gray-200/50'}`}>
+        <header className={`sticky top-0 z-50 backdrop-blur-xl border-b shadow-sm px-4 py-4 shrink-0 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#161616]/90 border-[#2a2a2a]' : 'bg-white/80 border-gray-200/50'}`}>
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 rounded-xl hover:bg-gray-100 active:scale-95 transition-all"
+              className={`p-2 rounded-xl active:scale-95 transition-all ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-700'}`}
             >
-              <ArrowLeft className="w-5 h-5 text-gray-700" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="font-semibold text-gray-900">Submit Update</h1>
-              <p className="text-sm text-gray-500">Help the community with real-time info</p>
+              <h1 className={`font-semibold transition-colors ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Submit Update</h1>
+              <p className={`text-sm transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Help the community with real-time info</p>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-6">
+        <div className="flex-1 overflow-y-auto w-full">
+          <main className="px-4 py-6 w-full">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Select Station */}
-          <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-            <Label htmlFor="station" className="text-sm font-semibold text-gray-900 mb-2 block">
+          <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+            <Label htmlFor="station" className={`text-sm font-semibold mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
               Select Fuel Station *
             </Label>
             <select
@@ -117,7 +123,7 @@ export function SubmitUpdatePage() {
               required
               value={formData.stationId}
               onChange={(e) => setFormData({ ...formData, stationId: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-gray-900"
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'}`}
             >
               <option value="">Choose a station...</option>
               {stations.map((station) => (
@@ -129,8 +135,8 @@ export function SubmitUpdatePage() {
           </div>
 
           {/* Your Name */}
-          <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-            <Label htmlFor="userName" className="text-sm font-semibold text-gray-900 mb-2 block">
+          <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+            <Label htmlFor="userName" className={`text-sm font-semibold mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
               Your Name *
             </Label>
             <Input
@@ -140,13 +146,13 @@ export function SubmitUpdatePage() {
               placeholder="e.g., Kamal Silva"
               value={formData.userName}
               onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
-              className="w-full"
+              className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder:text-gray-600' : ''}`}
             />
           </div>
 
           {/* Overall Status */}
-          <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-            <Label className="text-sm font-semibold text-gray-900 mb-3 block">
+          <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+            <Label className={`text-sm font-semibold mb-3 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
               Overall Station Status *
             </Label>
             <div className="flex gap-2 flex-wrap">
@@ -158,8 +164,8 @@ export function SubmitUpdatePage() {
 
           {/* Queue & Wait Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-              <Label htmlFor="queue" className="text-sm font-semibold text-gray-900 mb-2 block">
+            <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+              <Label htmlFor="queue" className={`text-sm font-semibold mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
                 Queue Length (vehicles)
               </Label>
               <Input
@@ -168,11 +174,11 @@ export function SubmitUpdatePage() {
                 min="0"
                 value={formData.queueLength}
                 onChange={(e) => setFormData({ ...formData, queueLength: parseInt(e.target.value) || 0 })}
-                className="w-full"
+                className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : ''}`}
               />
             </div>
-            <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-              <Label htmlFor="wait" className="text-sm font-semibold text-gray-900 mb-2 block">
+            <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+              <Label htmlFor="wait" className={`text-sm font-semibold mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
                 Waiting Time (minutes)
               </Label>
               <Input
@@ -181,18 +187,18 @@ export function SubmitUpdatePage() {
                 min="0"
                 value={formData.waitingTime}
                 onChange={(e) => setFormData({ ...formData, waitingTime: parseInt(e.target.value) || 0 })}
-                className="w-full"
+                className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : ''}`}
               />
             </div>
           </div>
 
           {/* Fuel Types */}
-          <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900">Fuel Type Availability</h3>
+          <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm space-y-4 transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+            <h3 className={`text-sm font-semibold transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>Fuel Type Availability</h3>
             
             {/* Petrol 92 */}
             <div>
-              <Label className="text-sm text-gray-700 mb-2 block">Petrol 92</Label>
+              <Label className={`text-sm mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Petrol 92</Label>
               <div className="flex gap-2 flex-wrap">
                 <StatusButton value="available" label="Available" fieldName="petrol92" />
                 <StatusButton value="limited" label="Limited" fieldName="petrol92" />
@@ -203,7 +209,7 @@ export function SubmitUpdatePage() {
 
             {/* Petrol 95 */}
             <div>
-              <Label className="text-sm text-gray-700 mb-2 block">Petrol 95</Label>
+              <Label className={`text-sm mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Petrol 95</Label>
               <div className="flex gap-2 flex-wrap">
                 <StatusButton value="available" label="Available" fieldName="petrol95" />
                 <StatusButton value="limited" label="Limited" fieldName="petrol95" />
@@ -214,7 +220,7 @@ export function SubmitUpdatePage() {
 
             {/* Diesel */}
             <div>
-              <Label className="text-sm text-gray-700 mb-2 block">Diesel</Label>
+              <Label className={`text-sm mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Diesel</Label>
               <div className="flex gap-2 flex-wrap">
                 <StatusButton value="available" label="Available" fieldName="diesel" />
                 <StatusButton value="limited" label="Limited" fieldName="diesel" />
@@ -225,7 +231,7 @@ export function SubmitUpdatePage() {
 
             {/* Kerosene */}
             <div>
-              <Label className="text-sm text-gray-700 mb-2 block">Kerosene</Label>
+              <Label className={`text-sm mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Kerosene</Label>
               <div className="flex gap-2 flex-wrap">
                 <StatusButton value="available" label="Available" fieldName="kerosene" />
                 <StatusButton value="limited" label="Limited" fieldName="kerosene" />
@@ -236,8 +242,8 @@ export function SubmitUpdatePage() {
           </div>
 
           {/* Additional Message */}
-          <div className="p-5 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-sm">
-            <Label htmlFor="message" className="text-sm font-semibold text-gray-900 mb-2 block">
+          <div className={`p-5 rounded-2xl backdrop-blur-xl border shadow-sm transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+            <Label htmlFor="message" className={`text-sm font-semibold mb-2 block transition-colors ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
               Additional Information (Optional)
             </Label>
             <Textarea
@@ -246,7 +252,7 @@ export function SubmitUpdatePage() {
               rows={4}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full"
+              className={`w-full ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder:text-gray-600' : ''}`}
             />
           </div>
 
@@ -269,6 +275,36 @@ export function SubmitUpdatePage() {
             )}
           </button>
         </form>
+          </main>
+        </div>
+        
+        {/* Desktop Side Panel Footer - Integrated Navigation */}
+        <div className={`p-4 border-t hidden lg:block shrink-0 mt-auto transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] border-[#2a2a2a]' : 'bg-white/50 border-gray-100'}`}>
+          <div className="flex items-center justify-between px-2">
+            <Link to="/" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
+              <Home className="w-5 h-5" />
+            </Link>
+            <Link to="/submit" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600'}`}>
+              <PlusCircle className="w-5 h-5" />
+            </Link>
+            <Link to="/feed" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
+              <Activity className="w-5 h-5" />
+            </Link>
+            <Link to="/settings" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
+              <Settings className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </aside>
+
+      {/* Right Panel - Map (Desktop only) */}
+      <main className="hidden lg:block flex-1 relative h-full bg-gray-50">
+        <MapView
+          stations={stations}
+          onStationClick={() => {}}
+          center={[7.8731, 80.7718]}
+          zoom={8}
+        />
       </main>
     </div>
   );

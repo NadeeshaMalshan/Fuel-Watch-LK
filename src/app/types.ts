@@ -48,3 +48,19 @@ export interface SubmitUpdateForm {
   kerosene: FuelStatus | 'not-available';
   message?: string;
 }
+export interface SearchSuggestion {
+  id: string;
+  type: 'station' | 'location';
+  title: string;
+  subtitle: string;
+  coordinates: [number, number];
+  station?: FuelStation;
+}
+
+export type Theme = 'light' | 'dark';
+export type Language = 'en' | 'si' | 'ta';
+
+export interface MapBounds {
+  northEast: [number, number];
+  southWest: [number, number];
+}

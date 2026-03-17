@@ -17,7 +17,26 @@ interface OSMElement {
 
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
 
-export async function fetchFuelStations(): Promise<FuelStation[]> {
+const CACHE_KEY = 'fuel_stations_cache';
+const CACHE_TIME_KEY = 'fuel_stations_cache_time';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export async function fetchFuelStations(forceRefresh = false): Promise<FuelStation[]> {
+  const cachedData = localStorage.getItem(CACHE_KEY);
+  const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+
+  // Return valid cache if available and not forcing refresh
+  if (!forceRefresh && cachedData && cachedTime) {
+    const isCacheValid = (Date.now() - parseInt(cachedTime)) < CACHE_TTL;
+    if (isCacheValid) {
+      try {
+        return JSON.parse(cachedData);
+      } catch (e) {
+        console.error('Failed to parse cached stations', e);
+      }
+    }
+  }
+
   const query = `
     [out:json][timeout:25];
     area["name:en"="Sri Lanka"]->.searchArea;
@@ -36,7 +55,7 @@ export async function fetchFuelStations(): Promise<FuelStation[]> {
     const response = await fetch(`${OVERPASS_URL}?data=${encodeURIComponent(query)}`, { signal: controller.signal });
     clearTimeout(id);
 
-    if (!response.ok) throw new Error('Failed to fetch data from OSM');
+    if (!response.ok) throw new Error(`Failed to fetch data from OSM: ${response.status}`);
     
     const data = await response.json();
     const elements: OSMElement[] = data.elements || [];
@@ -69,9 +88,24 @@ export async function fetchFuelStations(): Promise<FuelStation[]> {
       };
     });
 
+    // Update cache
+    localStorage.setItem(CACHE_KEY, JSON.stringify(osmStations));
+    localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+
     return osmStations;
   } catch (error) {
     console.error('Error fetching fuel stations:', error);
+    
+    // Fallback to expired cache if fetch fails (e.g., 429 Too Many Requests)
+    if (cachedData) {
+      console.log('Falling back to cached data due to fetch error');
+      try {
+        return JSON.parse(cachedData);
+      } catch (e) {
+        console.error('Failed to parse cached stations during fallback', e);
+      }
+    }
+    
     return [];
   }
 }

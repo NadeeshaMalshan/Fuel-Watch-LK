@@ -5,11 +5,13 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import type { FuelStation, UserUpdate } from '../types';
 import { useState, useEffect } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 export function StationDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme } = useTheme();
   
   const [station, setStation] = useState<FuelStation | null>((location.state?.station as FuelStation) || null);
   const stationUpdates: UserUpdate[] = [];
@@ -106,9 +108,9 @@ export function StationDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-24">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500`}>
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200/50 shadow-sm">
+      <header className={`sticky top-0 z-50 backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border-b shadow-sm`}>
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -129,14 +131,14 @@ export function StationDetailsPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Station Info Card */}
-        <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50 shadow-lg">
+        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border shadow-lg`}>
           <div className="flex items-start gap-4 mb-4">
             <div className={`p-3 rounded-xl ${statusConfig.bgColor} ${statusConfig.borderColor} border`}>
               <Fuel className={`w-8 h-8 ${statusConfig.textColor}`} />
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">{station.name}</h1>
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+              <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`}>{station.name}</h1>
+              <div className={`flex items-center gap-2 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
                 <MapPin className="w-4 h-4" />
                 <span>{station.address}</span>
               </div>
@@ -148,26 +150,26 @@ export function StationDetailsPage() {
 
           {/* Real-time Stats */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-100'} border`}>
               <div className="flex items-center gap-2 mb-1">
-                <Users className="w-4 h-4 text-gray-600" />
-                <span className="text-xs font-medium text-gray-500">Queue Length</span>
+                <Users className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>Queue Length</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{station.queueLength ?? '--'}</p>
+              <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{station.queueLength ?? '--'}</p>
               <p className="text-xs text-gray-500">vehicles</p>
             </div>
-            <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-100'} border`}>
               <div className="flex items-center gap-2 mb-1">
-                <Clock className="w-4 h-4 text-gray-600" />
-                <span className="text-xs font-medium text-gray-500">Wait Time</span>
+                <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                <span className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>Wait Time</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{station.waitingTime ?? '--'}</p>
+              <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{station.waitingTime ?? '--'}</p>
               <p className="text-xs text-gray-500">minutes</p>
             </div>
           </div>
 
           {/* Last Updated */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+          <div className={`flex items-center gap-2 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
             <TrendingUp className="w-4 h-4" />
             <span>Last updated {station.lastUpdated}</span>
           </div>
@@ -191,8 +193,8 @@ export function StationDetailsPage() {
         </div>
 
         {/* Fuel Availability */}
-        <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Fuel Availability</h2>
+        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border shadow-sm`}>
+          <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>Fuel Availability</h2>
           <div className="grid grid-cols-2 gap-3">
             {station.fuelTypes?.petrol92 && (
               <div className={`p-4 rounded-xl border ${getStatusConfig(station.fuelTypes.petrol92).bgColor} ${getStatusConfig(station.fuelTypes.petrol92).borderColor}`}>
