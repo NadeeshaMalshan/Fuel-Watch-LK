@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { FilterChips } from '../components/FilterChips';
 import { MapView } from '../components/MapView';
 import { StationBottomSheet } from '../components/StationBottomSheet';
-import { FuelStation } from '../types';
+import type { FuelStation } from '../types';
 import { mockStations, locationCoordinates } from '../data/mockData';
 import { toast, Toaster } from 'sonner';
 import { List, Map, Navigation, TrendingUp } from 'lucide-react';

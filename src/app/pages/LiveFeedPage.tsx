@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Users, Fuel, TrendingUp } from 'lucide-react';
 import { mockUpdates } from '../data/mockData';
-import { UserUpdate } from '../types';
+import type { UserUpdate } from '../types';
 import { formatDistanceToNow } from 'date-fns';
 
 export function LiveFeedPage() {

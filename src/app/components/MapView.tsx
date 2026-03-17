@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FuelStation, FuelStatus } from '../types';
+import type { FuelStation, FuelStatus } from '../types';
 
 interface MapViewProps {
   stations: FuelStation[];

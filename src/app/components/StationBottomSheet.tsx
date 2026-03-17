@@ -1,5 +1,5 @@
 import { Fuel, Clock, Users, CheckCircle2, X, Navigation } from 'lucide-react';
-import { FuelStation } from '../types';
+import type { FuelStation } from '../types';
 import { Badge } from './ui/badge';
 
 interface StationBottomSheetProps {

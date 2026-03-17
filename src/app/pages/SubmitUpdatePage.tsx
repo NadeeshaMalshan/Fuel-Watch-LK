@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, CheckCircle } from 'lucide-react';
 import { mockStations } from '../data/mockData';
-import { FuelStatus, SubmitUpdateForm } from '../types';
+import type { FuelStatus, SubmitUpdateForm } from '../types';
 import { toast } from 'sonner';
 import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';

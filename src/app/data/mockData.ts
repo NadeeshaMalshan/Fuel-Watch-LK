@@ -1,4 +1,4 @@
-import { FuelStation, UserUpdate } from '../types';
+import type { FuelStation, UserUpdate } from '../types';
 
 // Mock data for fuel stations in Ratnapura area
 // Ratnapura coordinates: approximately 6.6828° N, 80.3992° E

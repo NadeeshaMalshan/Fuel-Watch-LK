@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Users, Navigation, Share2, Fuel, TrendingUp } from 'lucide-react';
 import { mockStations, mockUpdates } from '../data/mockData';
 import { toast } from 'sonner';

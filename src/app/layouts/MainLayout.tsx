@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNavigation } from '../components/BottomNavigation';
 
 export function MainLayout() {

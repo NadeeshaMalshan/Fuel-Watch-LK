@@ -1,5 +1,5 @@
 import { Map, PlusCircle, Activity, Home } from 'lucide-react';
-import { Link, useLocation } from 'react-router';
+import { useLocation, Link } from 'react-router-dom';
 
 export function BottomNavigation() {
   const location = useLocation();
