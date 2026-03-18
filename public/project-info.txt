@@ -1,0 +1,18 @@
+{
+  title: 'තෙල් Alert - Real-Time Fuel Availability Tracker',
+  description: 'A real-time fuel station monitoring platform for Sri Lanka with interactive maps, community-driven fuel status updates, trilingual support (English, Sinhala, Tamil), and an admin panel. Built with React, Express, Neon PostgreSQL, Drizzle ORM, and Leaflet maps.',
+  tags: [
+    'React',
+    'TypeScript',
+    'Express',
+    'PostgreSQL',
+    'Drizzle ORM',
+    'Leaflet',
+    'Tailwind CSS',
+    'Vite'
+  ],
+  category: ['Full Stack'],
+  image: 'https://fuelalert.online/favicon.svg',
+  githubUrl: 'https://github.com/JayashanManodya/Fuel-Watch-LK',
+  demoUrl: 'https://fuelalert.online/',
+}
