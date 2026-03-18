@@ -86,12 +86,12 @@ export function MapView({
         minZoom: 7,
       }).setView(center, zoom);
 
-      const lightTiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      const darkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+      const osmTiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       
-      tileLayerRef.current = L.tileLayer(theme === 'dark' ? darkTiles : lightTiles, {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      tileLayerRef.current = L.tileLayer(osmTiles, {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 18,
+        className: theme === 'dark' ? 'map-tiles-dark' : '',
       }).addTo(mapInstanceRef.current);
 
       mapInstanceRef.current.on('moveend', () => {
@@ -166,10 +166,14 @@ export function MapView({
   useEffect(() => {
     if (!mapInstanceRef.current || !tileLayerRef.current) return;
     
-    const lightTiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    const darkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-    
-    tileLayerRef.current.setUrl(theme === 'dark' ? darkTiles : lightTiles);
+    const osmTiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+    tileLayerRef.current.setUrl(osmTiles);
+    const tileEl = tileLayerRef.current.getContainer();
+    if (tileEl) {
+      tileEl.className = tileEl.className.replace('map-tiles-dark', '').trim();
+      if (theme === 'dark') tileEl.classList.add('map-tiles-dark');
+    }
   }, [theme]);
 
   // Handle User Location Marker
