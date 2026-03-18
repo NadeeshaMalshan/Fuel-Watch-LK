@@ -1,73 +1,87 @@
-# React + TypeScript + Vite
+# ⛽ FuelWatch LK - Real-time Fuel Availability & Queue Tracking
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**FuelWatch LK** is a community-driven, real-time platform designed to track fuel availability and queue lengths at fuel stations across Sri Lanka. Built with a modern tech stack to ensure high performance and premium aesthetics, it helps Sri Lankans make informed decisions during their daily commute.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 Key Features
 
-## React Compiler
+- **🗺️ Interactive Map (Live & Dynamic)**: High-performance Leaflet-based map showing all fuel stations across the island.
+- **🕒 Real-time Queue Tracking**: Community-sourced updates for **Petrol (92/95)** and **Diesel (Auto/Super)** queue lengths and waiting times.
+- **🇹🇱 Multilingual Interface**: Full support for **English**, **Sinhala (සිංහල)**, and **Tamil (தமிழ்)**.
+- **🛡️ Secure Admin Panel**: Comprehensive dashboard for administrators to manage station details and approve/reject community feedback.
+- **🤝 Community-Driven**: Users can report missing stations or propose corrections via a detailed feedback system.
+- **🌓 Premium Experience**: Sleek, glassmorphic design with a dedicated **Dark Mode** for night-time convenience.
+- **📈 Global Status Calculation**: Automatically calculates the overall status of a station based on individual fuel types.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🏗️ Technical Architecture
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### **Frontend**
+- **Framework**: [React 19](https://react.dev/) + [Vite](https://vite.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **State Management**: [React Context API](https://react.dev/reference/react/createContext)
+- **Icons & UI**: [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
+- **Notifications**: [Sonner](https://sonner.stevenly.me/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### **Backend**
+- **Server**: [Node.js](https://nodejs.org/) with [Express 5](https://expressjs.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Runtime Builder**: [tsx](https://github.com/privatenumber/tsx)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### **Database & ORM**
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (Compatible with [Neon](https://neon.tech/))
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🚀 Quick Setup
+
+### **1. Prerequisites**
+Ensure you have **Node.js 18+** and a running **PostgreSQL** instance.
+
+### **2. Installation**
+```bash
+git clone https://github.com/JayashanManodya/Fuel-Watch-LK.git
+cd Fuel-Watch-LK
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### **3. Environment Config**
+Copy `.env.example` to `.env` and fill in your details:
+```bash
+PORT=3000
+DATABASE_URL=your_postgresql_url_here
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin_pass
 ```
+
+### **4. Database Setup**
+```bash
+# Generate migrations
+npm run db:generate
+
+# Push schema to DB
+npm run db:push
+```
+
+### **5. Run Locally**
+```bash
+# Start Backend
+npm run server
+
+# Start Frontend (in a separate terminal)
+npm run dev
+```
+
+---
+
+## 👥 Authors
+- **Jayashan Manodya** - [GitHub](https://github.com/JayashanManodya)
+- **Nadeesha Malshan** - [GitHub](https://github.com/NadeeshaMalshan)
+
+---
+
+## 🛡️ License
+This project is for community benefit and is open for contributions. Please ensure all modifications follow the project's premium design guidelines.
