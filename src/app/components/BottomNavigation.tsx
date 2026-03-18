@@ -1,7 +1,6 @@
 import { Home, Settings, MessageCircle } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { toast } from 'sonner';
 
 export function BottomNavigation() {
   const location = useLocation();
@@ -19,17 +18,12 @@ export function BottomNavigation() {
         <div className="flex items-center justify-around py-3">
           {navItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path && !item.isSubmitToken;
+            const isActive = location.pathname === item.path;
             
             return (
               <Link
                 key={index}
                 to={item.path}
-                onClick={(e) => {
-                  if (item.isSubmitToken) {
-                    toast.info(t('station.selectToUpdate') || 'Select a station on the map to submit an update');
-                  }
-                }}
                 className={`
                   flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200
                   ${isActive 

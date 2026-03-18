@@ -12,6 +12,9 @@ export interface FuelStation {
   petrolWaitingTime: number; // in minutes
   dieselQueueLength: number;
   dieselWaitingTime: number; // in minutes
+  /** Optional aggregate values used by some UI components. */
+  queueLength?: number;
+  waitingTime?: number; // in minutes
   coordinates: [number, number]; // [latitude, longitude]
   address: string;
   addressSi?: string;

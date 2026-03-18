@@ -16,10 +16,6 @@ export function SettingsPage() {
     fetchFuelStations().then(setStations);
   }, []);
 
-  useEffect(() => {
-    fetchFuelStations().then(setStations);
-  }, []);
-
   const languages = [
     { id: 'en', name: 'English', native: 'English' },
     { id: 'si', name: 'Sinhala', native: 'සිංහල' },

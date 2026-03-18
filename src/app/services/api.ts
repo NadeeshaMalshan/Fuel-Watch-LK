@@ -1,4 +1,4 @@
 // Base URL for all API calls.
-// In production (Vercel), set VITE_API_URL to your Railway backend URL.
-// In development, it falls back to /api (proxied by Vite to localhost:3000).
+// Default: Railway API via .env.development / .env.production.
+// Local backend: run `npm run server`, then use .env.development.local with VITE_API_URL empty or unset /api.
 export const API_BASE = import.meta.env.VITE_API_URL || '/api';

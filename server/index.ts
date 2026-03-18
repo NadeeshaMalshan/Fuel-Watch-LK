@@ -14,7 +14,8 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:4173',
     process.env.FRONTEND_URL || '',
-    /\.vercel\.app$/,  // allow any vercel.app subdomain
+    /\.vercel\.app$/,
+    /\.up\.railway\.app$/, // Railway-hosted frontends
   ].filter(Boolean),
   credentials: true,
 }));
