@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import {ArrowLeft, Send, CheckCircle, MapPin, Plus, AlertCircle} from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { fetchFuelStations } from '../services/osmService';
@@ -135,6 +136,12 @@ export function FeedbackPage() {
   };
 
   return (
+    <>
+      <SEO
+        title="Report a Fuel Station"
+        description="Help the community by reporting missing fuel stations or incorrect information in Sri Lanka. Submit station location and fuel availability details."
+        url="/feedback"
+      />
     <div className={`min-h-screen flex flex-col lg:flex-row transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] text-white' : 'bg-[#f8fafc]'}`}>
       
       {/* Form Section */}
@@ -425,5 +432,6 @@ export function FeedbackPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

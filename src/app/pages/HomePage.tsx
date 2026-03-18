@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { FilterChips } from '../components/FilterChips';
 import { MapView } from '../components/MapView';
 import { StationBottomSheet } from '../components/StationBottomSheet';
@@ -285,6 +286,11 @@ export function HomePage() {
 
   return (
     <>
+      <SEO
+        title="Find Fuel Stations in Sri Lanka"
+        description="Real-time fuel availability map for Sri Lanka. Check petrol and diesel stock, live queue lengths, and waiting times at stations near you."
+        url="/"
+      />
       <Toaster position="top-center" richColors />
 
       <div className={`flex flex-col lg:flex-row h-screen lg:h-screen overflow-hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] text-white' : 'bg-white/50 text-gray-900'}`}>

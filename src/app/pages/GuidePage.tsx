@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Info, Search, ShieldAlert, Activity, Clock, TrendingUp, List } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { SEO } from '../components/SEO';
 
 type SectionData = {
   id: string;
@@ -263,6 +264,12 @@ export function GuidePage() {
   const isDark = theme === 'dark';
 
   return (
+    <>
+      <SEO
+        title="How to Use Fuel Alert"
+        description="Step-by-step guide on how to use Fuel Alert to find fuel stations, check availability, report queue lengths, and contribute real-time updates in Sri Lanka."
+        url="/guide"
+      />
     <div
       className={`min-h-screen flex flex-col transition-colors duration-500 ${
         isDark ? 'bg-[#121212] text-white' : 'bg-gray-50 text-gray-900'
@@ -424,5 +431,6 @@ export function GuidePage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

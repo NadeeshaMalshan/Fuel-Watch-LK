@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Fuel, Globe, Users, Clock, MapPin, Heart, Github, ExternalLink, Code } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { SEO } from '../components/SEO';
 
 const aboutContent = {
   en: {
@@ -88,6 +89,12 @@ export function AboutPage() {
   const isDark = theme === 'dark';
 
   return (
+    <>
+      <SEO
+        title="About Fuel Alert"
+        description="Learn about Fuel Alert — a community-powered, real-time fuel availability and queue tracker for Sri Lanka. Available in English, Sinhala, and Tamil."
+        url="/about"
+      />
     <div
       className={`min-h-screen flex flex-col transition-colors duration-500 ${
         isDark ? 'bg-[#121212] text-white' : 'bg-gray-50 text-gray-900'
@@ -460,5 +467,6 @@ export function AboutPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

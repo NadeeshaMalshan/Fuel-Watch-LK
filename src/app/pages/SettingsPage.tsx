@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { ArrowLeft, Moon, Sun, Globe, ChevronRight, CheckCircle2, Home, Settings, MessageSquare, Info, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { toast, Toaster } from 'sonner';
@@ -24,6 +25,12 @@ export function SettingsPage() {
 
   return (
     <>
+      <SEO
+        title="Settings"
+        description="Customize your Fuel Alert experience. Change language (English, Sinhala, Tamil), switch dark/light theme, and manage your preferences."
+        url="/settings"
+        noIndex={true}
+      />
       <Toaster position="top-center" richColors />
       
       <div className={`flex flex-col lg:flex-row h-screen lg:h-screen overflow-hidden ${theme === 'dark' ? 'bg-[#121212] text-white' : 'bg-white/50 text-gray-900'} transition-colors duration-500`}>

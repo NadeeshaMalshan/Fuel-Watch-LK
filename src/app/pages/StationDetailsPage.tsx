@@ -1,4 +1,5 @@
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { ArrowLeft, MapPin, Navigation, Share2, Fuel, TrendingUp, AlertCircle, Send, CheckCircle, X, PlusCircle } from 'lucide-react';
 // import { fetchFuelStations } from '../services/osmService';
 import { toast } from 'sonner';
@@ -201,7 +202,16 @@ export function StationDetailsPage() {
     );
   };
 
+  const stationName = station?.name || 'Fuel Station';
+  const stationCity = station?.address?.split(',').slice(-2).join(',').trim() || 'Sri Lanka';
+
   return (
+    <>
+      <SEO
+        title={`${stationName} — Fuel Availability`}
+        description={`Check real-time fuel availability, queue length, and waiting time at ${stationName} in ${stationCity}. Updated by the community.`}
+        url={`/station/${id}`}
+      />
     <div className={`h-full overflow-y-auto ${theme === 'dark' ? 'bg-background text-foreground' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500 scroll-smooth`}>
       {/* Header */}
       <header className={`sticky top-0 z-50 backdrop-blur-xl ${theme === 'dark' ? 'bg-background/80 border-border' : 'bg-white/80 border-gray-200/50'} border-b shadow-sm`}>
@@ -516,5 +526,6 @@ export function StationDetailsPage() {
         )}
       </main>
     </div>
+    </>
   );
 }
