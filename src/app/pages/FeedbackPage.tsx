@@ -136,50 +136,106 @@ export function FeedbackPage() {
               </div>
             )}
 
-            {requestType === 'add_station' ? (
+            {/* Form Section - Unified for Add and Update */}
+            {requestType === 'add_station' || (requestType === 'update_station' && initialStationId) ? (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className={`p-5 rounded-2xl border shadow-sm space-y-4 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
-                  <div className="space-y-2">
-                    <Label>Station Name (English)</Label>
-                    <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Full name of the station" required />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Latitude</Label>
-                      <Input type="number" step="0.000001" value={formData.lat} onChange={e => setFormData({...formData, lat: parseFloat(e.target.value)})} required />
+                <div className={`p-5 rounded-2xl border shadow-sm space-y-6 ${theme === 'dark' ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+                  
+                  {/* Context Header for Update Request */}
+                  {requestType === 'update_station' && (
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                      <AlertCircle className="w-5 h-5 text-blue-500 shrink-0" />
+                      <div>
+                        <p className="text-sm font-bold">Proposing changes for:</p>
+                        <p className="text-xs opacity-70 italic truncate">
+                          {stations.find(s => s.id === initialStationId)?.name || 'Selected Station'}
+                        </p>
+                      </div>
                     </div>
+                  )}
+
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Longitude</Label>
-                      <Input type="number" step="0.000001" value={formData.lng} onChange={e => setFormData({...formData, lng: parseFloat(e.target.value)})} required />
+                      <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Station Name (English)</Label>
+                      <Input 
+                        value={formData.name} 
+                        onChange={e => setFormData({...formData, name: e.target.value})} 
+                        placeholder="e.g. CEYPETCO - Colombo 07" 
+                        required 
+                        className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                      />
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label>Station Code (if known)</Label>
-                    <Input value={formData.stationCode} onChange={e => setFormData({...formData, stationCode: e.target.value})} placeholder="e.g CP-001" />
-                  </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Latitude</Label>
+                        <Input 
+                          type="number" 
+                          step="0.000001" 
+                          value={formData.lat} 
+                          onChange={e => setFormData({...formData, lat: parseFloat(e.target.value)})} 
+                          required 
+                          className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Longitude</Label>
+                        <Input 
+                          type="number" 
+                          step="0.000001" 
+                          value={formData.lng} 
+                          onChange={e => setFormData({...formData, lng: parseFloat(e.target.value)})} 
+                          required 
+                          className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                        />
+                      </div>
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label>Address</Label>
-                    <Input value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Street, City" required />
-                  </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Station Code (Optional)</Label>
+                      <Input 
+                        value={formData.stationCode} 
+                        onChange={e => setFormData({...formData, stationCode: e.target.value})} 
+                        placeholder="e.g. CP-001 or W- Colombo 10" 
+                        className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label>Additional Information</Label>
-                    <Textarea 
-                      value={formData.message} 
-                      onChange={e => setFormData({...formData, message: e.target.value})} 
-                      placeholder="Any other details you'd like to share..." 
-                      rows={4}
-                    />
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Full Address</Label>
+                      <Input 
+                        value={formData.address} 
+                        onChange={e => setFormData({...formData, address: e.target.value})} 
+                        placeholder="No. 123, Main Street, City" 
+                        required 
+                        className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold uppercase tracking-wider opacity-60">
+                        {requestType === 'add_station' ? 'Additional Info' : 'Describe what\'s wrong'}
+                      </Label>
+                      <Textarea 
+                        value={formData.message} 
+                        onChange={e => setFormData({...formData, message: e.target.value})} 
+                        placeholder={requestType === 'add_station' ? 'Anything else to share?' : 'Please tell us what exactly is incorrect...'}
+                        rows={4}
+                        required={requestType === 'update_station'}
+                        className={theme === 'dark' ? 'bg-gray-900/50 border-gray-700' : ''}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-xl shadow-blue-500/30"
+                  className={`w-full py-7 rounded-2xl font-black text-lg shadow-xl transition-all active:scale-[0.98] ${
+                    isSubmitting 
+                      ? 'bg-gray-400 opacity-50 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30'
+                  }`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">
@@ -188,76 +244,46 @@ export function FeedbackPage() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <Send className="w-5 h-5" />
-                      Submit Request
+                      {requestType === 'add_station' ? <Send className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
+                      {requestType === 'add_station' ? 'Submit New Station' : 'Request Official Update'}
                     </div>
                   )}
                 </Button>
               </form>
             ) : (
+              /* Notice for Selection required */
               <div className="space-y-6">
-                {(initialStationId && stations.length > 0) ? (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className={`p-6 rounded-2xl border space-y-4 ${theme === 'dark' ? 'bg-blue-500/5 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}>
-                      <div className="flex items-center gap-3">
-                         <div className="p-2 bg-blue-500/10 rounded-lg">
-                           <AlertCircle className="w-5 h-5 text-blue-500" />
-                         </div>
-                         <div>
-                           <h3 className="font-bold">Reporting Issue for:</h3>
-                           <p className="text-sm opacity-70">{localize(stations.find(s => s.id === initialStationId), 'name')}</p>
-                         </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label>What is incorrect?</Label>
-                        <Textarea 
-                          value={formData.message} 
-                          onChange={e => setFormData({...formData, message: e.target.value})} 
-                          placeholder="Please describe what needs to be fixed (e.g., location, name, type of fuel...)" 
-                          rows={6}
-                          required
-                        />
-                      </div>
+                <div className={`p-8 rounded-2xl border space-y-4 text-center ${theme === 'dark' ? 'bg-blue-500/5 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}>
+                  <div className="w-14 h-14 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-blue-500/5">
+                    <AlertCircle className="w-7 h-7 text-blue-500" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="font-black text-xl">Select a Station First</h3>
+                    <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      To request corrections for an existing station, please find it on the map or list and click the **"Report incorrect information"** link.
+                    </p>
+                    <div className={`p-4 rounded-xl text-left space-y-2 inline-block mx-auto ${theme === 'dark' ? 'bg-black/20' : 'bg-white/50'}`}>
+                      <p className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">How to do it:</p>
+                      <ul className={`text-[11px] font-medium space-y-2 list-none ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <li className="flex items-center gap-2 decoration-blue-500/30 underline underline-offset-4 decoration-dashed">
+                          <span className="w-1 h-1 rounded-full bg-blue-500" /> Go to the <strong className="text-blue-500">Home Page</strong>
+                        </li>
+                        <li className="flex items-center gap-2 decoration-blue-500/30 underline underline-offset-4 decoration-dashed">
+                          <span className="w-1 h-1 rounded-full bg-blue-500" /> Select a fuel station
+                        </li>
+                        <li className="flex items-center gap-2 decoration-blue-500/30 underline underline-offset-4 decoration-dashed">
+                          <span className="w-1 h-1 rounded-full bg-blue-500" /> Click <strong className="text-blue-500">"Report incorrect information"</strong>
+                        </li>
+                      </ul>
                     </div>
-
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-xl shadow-blue-500/30"
-                    >
-                      {isSubmitting ? 'Submitting...' : 'Submit Report'}
-                    </Button>
-                  </form>
-                ) : (
-                  <>
-                    <div className={`p-6 rounded-2xl border space-y-4 text-center ${theme === 'dark' ? 'bg-blue-500/5 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}>
-                      <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto">
-                        <AlertCircle className="w-6 h-6 text-blue-500" />
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="font-bold text-lg">Report Incorrect Information</h3>
-                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                          To report an error or update details for an existing station, please find the station on the map or list first.
-                        </p>
-                        <ul className={`text-sm space-y-2 text-left list-disc list-inside ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                          <li>Go to the **Station Details Page**</li>
-                          <li>Click on **"Report incorrect information"** link at the bottom</li>
-                          <li>Describe what needs to be changed</li>
-                        </ul>
-                      </div>
-                      <Button 
-                        variant="default"
-                        className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold"
-                        onClick={() => navigate('/')}
-                      >
-                        Go to Home to find station
-                      </Button>
-                    </div>
-
-                    
-                  </>
-                )}
+                  </div>
+                  <Button 
+                    className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold mt-4"
+                    onClick={() => navigate('/')}
+                  >
+                    Return to Map
+                  </Button>
+                </div>
               </div>
             )}
           </div>
