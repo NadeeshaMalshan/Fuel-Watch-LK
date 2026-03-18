@@ -13,8 +13,9 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:4173',
-    process.env.FRONTEND_URL || 'https://fuel-watch-lk.vercel.app',
-  ],
+    process.env.FRONTEND_URL || '',
+    /\.vercel\.app$/,  // allow any vercel.app subdomain
+  ].filter(Boolean),
   credentials: true,
 }));
 
