@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {ArrowLeft, Send, CheckCircle, MapPin, Plus, AlertCircle} from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -43,6 +43,8 @@ export function FeedbackPage() {
   const [isSelectingFromMap, setIsSelectingFromMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>([7.8731, 80.7718]);
   const [mapZoom, setMapZoom] = useState(8);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const mobileMapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchFuelStations().then(setStations);
@@ -79,6 +81,15 @@ export function FeedbackPage() {
       toast.success('Location selected from map!');
     }
   };
+
+  useEffect(() => {
+    if (!isSelectingFromMap) return;
+    // Mobile-only UX: bring the expanded map into view.
+    // Use rAF so the DOM has applied the expanded height first.
+    requestAnimationFrame(() => {
+      mobileMapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [isSelectingFromMap]);
 
   const handleManualLocationChange = (field: 'lat' | 'lng', value: string) => {
     const numValue = parseFloat(value);
@@ -143,7 +154,7 @@ export function FeedbackPage() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto w-full px-6 py-8">
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full px-6 py-8">
           <div className="max-w-xl mx-auto space-y-8">
             {/* Request Type Selection */}
             {!initialStationId && (
@@ -216,6 +227,53 @@ export function FeedbackPage() {
                           {isSelectingFromMap ? 'Selecting...' : 'Select from Map'}
                         </button>
                       </div>
+
+                      {/* Mobile Map Picker (expands above the form content) */}
+                      <div ref={mobileMapRef} className="lg:hidden">
+                        <div
+                          className={`
+                            w-full overflow-hidden rounded-3xl border transition-all duration-300
+                            ${isSelectingFromMap ? 'max-h-[44vh] opacity-100' : 'max-h-0 opacity-0 border-transparent'}
+                            ${theme === 'dark' ? 'bg-[#0f0f0f] border-[#2a2a2a]' : 'bg-white border-gray-200/70'}
+                          `}
+                        >
+                          <div className="relative h-[44vh]">
+                            <MapView
+                              stations={stations}
+                              onStationClick={() => {}}
+                              center={mapCenter}
+                              zoom={mapZoom}
+                              selectedLocation={[formData.lat, formData.lng]}
+                              onLocationSelect={handleLocationSelect}
+                              variant="select"
+                              className="w-full h-full"
+                            />
+
+                            {/* Instruction Overlay */}
+                            <div className="absolute top-3 left-3 right-3 z-[6001]">
+                              <div className={`px-4 py-3 rounded-3xl backdrop-blur-2xl border shadow-xl flex items-center gap-3 ${theme === 'dark' ? 'bg-[#1a1a1a]/90 border-blue-500/30 text-white' : 'bg-white/90 border-blue-200/60 text-gray-900'}`}>
+                                <div className="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white shrink-0">
+                                  <MapPin className="w-4 h-4" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-black uppercase tracking-widest">Tap map to pick location</p>
+                                  <p className={`text-[10px] font-bold uppercase tracking-wider opacity-60 truncate ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>
+                                    {formData.lat.toFixed(5)}, {formData.lng.toFixed(5)}
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsSelectingFromMap(false)}
+                                  className={`px-3 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${theme === 'dark' ? 'bg-white/10 hover:bg-white/15 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+                                >
+                                  Close
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Input 

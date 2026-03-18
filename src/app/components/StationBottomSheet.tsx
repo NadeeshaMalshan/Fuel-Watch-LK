@@ -62,12 +62,12 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+        className="fixed inset-0 bg-black/20 z-[5990] transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Bottom Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300">
+      <div className="fixed bottom-0 left-0 right-0 z-[6000] animate-in slide-in-from-bottom duration-300">
         <div className="mx-auto max-w-2xl px-4 pb-4">
           <div className={`backdrop-blur-2xl border transition-colors duration-500 rounded-[2.5rem] shadow-2xl overflow-hidden
             ${theme === 'dark' ? 'bg-card/90 border-border' : 'bg-white/95 border-gray-200/50'}

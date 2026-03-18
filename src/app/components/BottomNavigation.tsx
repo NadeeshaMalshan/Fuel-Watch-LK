@@ -13,7 +13,7 @@ export function BottomNavigation() {
   ];
 
   return (
-    <nav className={`fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t shadow-lg lg:hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212]/95 border-[#2a2a2a]' : 'bg-white/90 border-gray-200/50'}`}>
+    <nav className={`fixed bottom-0 left-0 right-0 z-[5000] backdrop-blur-xl border-t shadow-lg lg:hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212]/95 border-[#2a2a2a]' : 'bg-white/90 border-gray-200/50'}`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-around py-3">
           {navItems.map((item, index) => {

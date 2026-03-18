@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Header } from '../components/Header';
 import { FilterChips } from '../components/FilterChips';
 import { MapView } from '../components/MapView';
+import { StationBottomSheet } from '../components/StationBottomSheet';
 import type { FuelStation } from '../types';
 import { useTheme } from '../context/ThemeContext';
 import { fetchFuelStations } from '../services/osmService';
 import { toast, Toaster } from 'sonner';
-import { List, Map, TrendingUp, Loader2, Search, Locate, Clock, Settings, Users, MapPin, Home, AlertCircle, Plus, MessageSquare } from 'lucide-react';
+import { List, TrendingUp, Loader2, Search, Locate, Clock, Settings, Users, MapPin, Home, AlertCircle, Plus, MessageSquare } from 'lucide-react';
 import type { MapBounds, SearchSuggestion } from '../types';
 
 type FuelType = 'all' | 'petrol92' | 'petrol95' | 'autoDiesel' | 'superDiesel' | 'kerosene';
@@ -29,6 +29,10 @@ export function HomePage() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([7.8731, 80.7718]);
   const [currentMapZoom, setCurrentMapZoom] = useState(8);
+  const [selectedStation, setSelectedStation] = useState<FuelStation | null>(null);
+  const [isStationSheetOpen, setIsStationSheetOpen] = useState(false);
+
+  const isMobile = useMemo(() => window.matchMedia?.('(max-width: 1023px)')?.matches ?? true, []);
 
   useEffect(() => {
     const loadStations = async () => {
@@ -60,39 +64,67 @@ export function HomePage() {
 
   // Get user's current location
   const getUserLocation = useCallback(() => {
-    if ('geolocation' in navigator) {
-      toast.promise(
-        new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
-              setUserLocation(coords);
-              setCurrentMapCenter(coords);
-              setCurrentMapZoom(13);
-              
-              // Calculate distances for all stations
-              const stationsWithDistance = stations.map((station: FuelStation) => ({
-                ...station,
-                distance: calculateDistance(
-                  coords[0], coords[1],
-                  station.coordinates[0], station.coordinates[1]
-                )
-              }));
-              setStations(stationsWithDistance);
-              resolve(coords);
-            },
-            (error) => reject(error)
-          );
-        }),
-        {
-          loading: 'Getting your location...',
-          success: 'Location found! Showing nearest stations.',
-          error: 'Could not get your location.',
-        }
-      );
-    } else {
-      toast.error('Geolocation is not supported by your browser');
+    if (!('geolocation' in navigator)) {
+      toast.error('GPS is not supported by your browser.');
+      return;
     }
+
+    // Mobile browsers require a secure context (HTTPS) for geolocation.
+    // Localhost is considered secure, but LAN IPs over http are not.
+    if (!window.isSecureContext) {
+      toast.error('GPS needs HTTPS. Open the app via https:// or install it as a PWA.');
+      return;
+    }
+
+    const getFriendlyGeoError = (error: GeolocationPositionError) => {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          return 'Location permission denied. Enable location access in your browser settings.';
+        case error.POSITION_UNAVAILABLE:
+          return 'Location unavailable. Turn on GPS and try again.';
+        case error.TIMEOUT:
+          return 'Location request timed out. Try again (or move to an open area).';
+        default:
+          return 'Could not get your location.';
+      }
+    };
+
+    toast.promise(
+      new Promise<[number, number]>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+            setUserLocation(coords);
+            setCurrentMapCenter(coords);
+            setCurrentMapZoom(13);
+
+            // Calculate distances for all stations
+            const stationsWithDistance = stations.map((station: FuelStation) => ({
+              ...station,
+              distance: calculateDistance(
+                coords[0], coords[1],
+                station.coordinates[0], station.coordinates[1]
+              )
+            }));
+            setStations(stationsWithDistance);
+            resolve(coords);
+          },
+          (error) => reject(error),
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000,
+          }
+        );
+      }),
+      {
+        loading: 'Getting your location...',
+        success: 'Location found! Showing nearest stations.',
+        error: (e) => (e && typeof e === 'object' && 'code' in (e as any))
+          ? getFriendlyGeoError(e as GeolocationPositionError)
+          : 'Could not get your location.',
+      }
+    );
   }, [stations]);
 
   const handleBoundsChange = useCallback(async (center: [number, number], zoom: number, bounds: MapBounds) => {
@@ -236,6 +268,17 @@ export function HomePage() {
     navigate(`/station/${station.id}`, { state: { station } });
   }, [navigate]);
 
+  const handleStationSelect = useCallback((station: FuelStation) => {
+    setSelectedStation(station);
+    setIsStationSheetOpen(true);
+  }, []);
+
+  const handleSheetConfirm = useCallback((stationId: string) => {
+    const station = stations.find(s => s.id === stationId) ?? selectedStation;
+    if (station) {
+      navigate(`/station/${station.id}`, { state: { station } });
+    }
+  }, [navigate, selectedStation, stations]);
 
 
 
@@ -243,11 +286,6 @@ export function HomePage() {
   return (
     <>
       <Toaster position="top-center" richColors />
-      
-      {/* Mobile Top Header - Hidden on Desktop */}
-      <div className="lg:hidden">
-        <Header />
-      </div>
 
       <div className={`flex flex-col lg:flex-row h-screen lg:h-screen overflow-hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] text-white' : 'bg-white/50 text-gray-900'}`}>
         {/* Dashboard Side Panel - Hidden on small screens if map is active */}
@@ -288,46 +326,6 @@ export function HomePage() {
                   </p>
                   <p className={`text-[9px] font-bold uppercase tracking-wider mt-1 ${theme === 'dark' ? 'text-green-500/60' : 'text-green-600'}`}>{t('filter.stock')}</p>
                 </div>
-              </div>
-
-              {/* Sorting & Search (Mobile only, Desktop uses map overlay) */}
-              <div className="lg:hidden flex flex-col gap-2 relative">
-                <div className="relative flex-1">
-                  <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
-                  <input
-                    type="text"
-                    placeholder={t('app.search')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                    className={`w-full pl-9 pr-4 py-3 border rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-white/20 transition-all ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white placeholder:text-gray-600 sticky-top-input' : 'bg-white border-gray-100 text-gray-900 focus:ring-blue-400'}`}
-                  />
-                </div>
-
-                {/* Mobile Suggestions */}
-                {isSearchFocused && suggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-60 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {suggestions.map((suggestion) => (
-                      <button
-                        key={suggestion.id}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleSelectSuggestion(suggestion);
-                        }}
-                        className="w-full px-4 py-3 flex items-start gap-3 hover:bg-gray-50 border-b border-gray-50 last:border-none text-left transition-colors"
-                      >
-                        <div className={`mt-1 p-1.5 rounded-lg ${suggestion.type === 'station' ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-400'}`}>
-                          {suggestion.type === 'station' ? <List className="w-3 h-3" /> : <MapPin className="w-3 h-3" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-gray-900 truncate">{suggestion.title}</p>
-                          <p className="text-[10px] text-gray-400 truncate">{suggestion.subtitle}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Community Feedback Prompt */}
@@ -486,6 +484,64 @@ export function HomePage() {
           flex-1 relative h-full bg-gray-50
           ${viewMode === 'map' ? 'block' : 'hidden lg:block'}
         `}>
+          {/* Mobile Google-Maps-style top overlay */}
+          <div className="absolute top-3 left-0 right-0 z-2000 px-4 lg:hidden">
+            <div className="mx-auto max-w-xl">
+              <div className="relative">
+                <div className={`relative flex items-center backdrop-blur-3xl border rounded-4xl px-4 py-3 shadow-[0_18px_45px_rgba(0,0,0,0.12)] transition-colors duration-500 ${theme === 'dark' ? 'bg-card/90 border-border' : 'bg-white/90 border-white/50'}`}>
+                  <Search className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-500' : 'text-blue-500'}`} />
+                  <input
+                    type="text"
+                    placeholder={t('app.search')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                    className={`flex-1 bg-transparent border-none focus:ring-0 font-semibold ml-3 text-sm transition-colors ${theme === 'dark' ? 'text-gray-100 placeholder:text-gray-600' : 'text-gray-900 placeholder:text-gray-400'}`}
+                  />
+                  <div className={`h-5 w-px mx-3 transition-colors ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`} />
+                  <button
+                    onClick={getUserLocation}
+                    className={`p-2 rounded-2xl transition-all active:scale-95 ${theme === 'dark' ? 'bg-white/10 text-gray-300 hover:bg-white/15' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
+                    aria-label={t('view.locate')}
+                  >
+                    <Locate className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Mobile Suggestions Dropdown */}
+                {isSearchFocused && suggestions.length > 0 && (
+                  <div className={`absolute top-full left-0 right-0 mt-3 backdrop-blur-2xl rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] border overflow-hidden z-2000 animate-in fade-in slide-in-from-top-4 duration-200 ${theme === 'dark' ? 'bg-card/95 border-border shadow-black/60' : 'bg-white/95 border-white/50'}`}>
+                    <div className="p-2 space-y-1">
+                      {suggestions.map((suggestion) => (
+                        <button
+                          key={suggestion.id}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleSelectSuggestion(suggestion);
+                          }}
+                          className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl transition-all text-left ${theme === 'dark' ? 'hover:bg-white/5' : 'hover:bg-blue-50/50'}`}
+                        >
+                          <div className={`p-2.5 rounded-xl ${suggestion.type === 'station' ? (theme === 'dark' ? 'bg-white/10 text-gray-300' : 'bg-blue-100 text-blue-600') : (theme === 'dark' ? 'bg-white/5 text-gray-500' : 'bg-gray-100 text-gray-400')}`}>
+                            {suggestion.type === 'station' ? <List className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm font-bold truncate ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>{suggestion.title}</p>
+                            <p className={`text-[11px] font-medium truncate ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>{suggestion.subtitle}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-3 px-1">
+                <FilterChips onFilterChange={setActiveFilter} variant="overlay" className="px-1" />
+              </div>
+            </div>
+          </div>
+
           {/* Map Overlay Search Bar (Desktop only) */}
           <div className="absolute top-8 left-1/2 -translate-x-1/2 z-1000 w-full max-w-xl px-4 hidden lg:block">
             <div className="relative group">
@@ -542,33 +598,16 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Map View Toggle (Mobile only) */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-1000 lg:hidden">
-            <div className={`flex p-1.5 backdrop-blur-2xl border rounded-[2rem] shadow-2xl transition-colors duration-500 ${theme === 'dark' ? 'bg-card/95 border-border shadow-black/60' : 'bg-white/90 border-white/50'}`}>
-              <button
-                onClick={() => setViewMode('map')}
-                className={`flex items-center gap-2 px-7 py-3 rounded-[1.5rem] text-sm font-black transition-all duration-500 ${viewMode === 'map' ? (theme === 'dark' ? 'bg-white/15 text-white shadow-xl shadow-black/20' : 'bg-gray-900 text-white shadow-xl shadow-black/20') : (theme === 'dark' ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:bg-white')}`}
-              >
-                <Map className="w-4 h-4" />
-                {t('view.map')}
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center gap-2 px-7 py-3 rounded-[1.5rem] text-sm font-black transition-all duration-500 ${viewMode === 'list' ? (theme === 'dark' ? 'bg-white/15 text-white shadow-xl shadow-black/20' : 'bg-gray-900 text-white shadow-xl shadow-black/20') : (theme === 'dark' ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:bg-white')}`}
-              >
-                <List className="w-4 h-4" />
-                {t('view.list')}
-              </button>
-            </div>
-          </div>
-
           <MapView
             stations={sortedStations}
             onStationClick={handleStationClick}
+            onStationSelect={handleStationSelect}
             center={currentMapCenter}
             zoom={currentMapZoom}
             onBoundsChange={handleBoundsChange}
             userLocation={userLocation}
+            variant={isMobile ? 'select' : 'popup'}
+            className="w-full h-full"
           />
 
           {/* Floating Action Buttons (Desktop) */}
@@ -600,6 +639,13 @@ export function HomePage() {
           )}
         </main>
       </div>
+
+      <StationBottomSheet
+        station={selectedStation}
+        isOpen={isStationSheetOpen}
+        onClose={() => setIsStationSheetOpen(false)}
+        onConfirm={handleSheetConfirm}
+      />
 
       </>
   );

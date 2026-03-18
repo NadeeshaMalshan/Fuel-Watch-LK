@@ -7,23 +7,29 @@ import { useTheme } from '../context/ThemeContext';
 interface MapViewProps {
   stations: FuelStation[];
   onStationClick: (station: FuelStation) => void;
+  onStationSelect?: (station: FuelStation) => void;
   center: [number, number];
   zoom?: number;
   onBoundsChange?: (center: [number, number], zoom: number, bounds: MapBounds) => void;
   userLocation?: [number, number] | null;
   onLocationSelect?: (lat: number, lng: number) => void;
   selectedLocation?: [number, number] | null;
+  variant?: 'popup' | 'select';
+  className?: string;
 }
 
 export function MapView({ 
   stations, 
   onStationClick, 
+  onStationSelect,
   center, 
   zoom = 13, 
   onBoundsChange, 
   userLocation,
   onLocationSelect,
-  selectedLocation
+  selectedLocation,
+  variant = 'popup',
+  className
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -35,8 +41,10 @@ export function MapView({
   const lastCenterPropRef = useRef<string>("");
   const onBoundsChangeRef = useRef(onBoundsChange);
   const onStationClickRef = useRef(onStationClick);
+  const onStationSelectRef = useRef(onStationSelect);
   const onLocationSelectRef = useRef(onLocationSelect);
   const stationsRef = useRef(stations);
+  const variantRef = useRef(variant);
 
   useEffect(() => {
     onLocationSelectRef.current = onLocationSelect;
@@ -53,6 +61,14 @@ export function MapView({
   useEffect(() => {
     onStationClickRef.current = onStationClick;
   }, [onStationClick]);
+
+  useEffect(() => {
+    onStationSelectRef.current = onStationSelect;
+  }, [onStationSelect]);
+
+  useEffect(() => {
+    variantRef.current = variant;
+  }, [variant]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -105,6 +121,7 @@ export function MapView({
 
       // Handle custom popup button click
       mapInstanceRef.current.on('popupopen', (e) => {
+        if (variantRef.current !== 'popup') return;
         const popup = e.popup;
         const container = popup.getElement();
         if (container) {
@@ -277,6 +294,15 @@ export function MapView({
         icon: createCustomIcon(station.status),
       }).addTo(mapInstanceRef.current!);
 
+      if (variant === 'select') {
+        marker.on('click', (e: L.LeafletMouseEvent) => {
+          L.DomEvent.stopPropagation(e);
+          onStationSelectRef.current?.(station);
+        });
+        markersRef.current.push(marker);
+        return;
+      }
+
       const getFuelStyles = (status?: string) => {
         if (status === 'available') return { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', dot: '#22c55e' };
         if (status === 'limited') return { bg: '#fffbeb', border: '#fef3c7', text: '#b45309', dot: '#f59e0b' };
@@ -406,7 +432,7 @@ export function MapView({
 
       markersRef.current.push(marker);
     });
-  }, [stations, theme]);
+  }, [stations, theme, variant]);
 
-  return <div ref={mapRef} className="w-full h-full rounded-xl overflow-hidden shadow-lg" />;
+  return <div ref={mapRef} className={className ?? "w-full h-full overflow-hidden"} />;
 }
