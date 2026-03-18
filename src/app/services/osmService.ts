@@ -110,28 +110,83 @@ export async function fetchFuelStations(): Promise<FuelStation[]> {
       };
     });
 
-    // 3. Seed the local DB in the background
-    try {
-      await fetch(`${API_URL}/stations/seed`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stations: osmStations }),
-      });
-      console.log('Successfully seeded database from OSM');
-      
-      // Fetch the mapped versions from DB after seeding so they have numeric IDs
-      const refetchResponse = await fetch(`${API_URL}/stations`);
-      if (refetchResponse.ok) {
-        const dbStations = await refetchResponse.json();
-        return dbStations.map(mapDbToFuelStation);
-      }
-    } catch (seedError) {
-      console.error('Failed to seed DB, returning OSM data anyway', seedError);
-    }
-
     return osmStations;
   } catch (error) {
     console.error('Error fetching fuel stations:', error);
     return [];
+  }
+}
+
+// Fetch stations from OSM and seed the database — admin only
+export async function adminSeedFromOSM(authHeader: string): Promise<{ success: boolean; count: number; message: string }> {
+  const query = `
+    [out:json][timeout:25];
+    area["name:en"="Sri Lanka"]->.searchArea;
+    (
+      node["amenity"="fuel"](area.searchArea);
+      way["amenity"="fuel"](area.searchArea);
+      relation["amenity"="fuel"](area.searchArea);
+    );
+    out center;
+  `;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  const osmResponse = await fetch(`${OVERPASS_URL}?data=${encodeURIComponent(query)}`, { signal: controller.signal });
+  clearTimeout(timeout);
+
+  if (!osmResponse.ok) throw new Error(`OSM fetch failed: ${osmResponse.status}`);
+
+  const data = await osmResponse.json();
+  const elements: OSMElement[] = data.elements || [];
+
+  const osmStations = elements.map((el) => {
+    const lat = el.lat || el.center?.lat || 0;
+    const lon = el.lon || el.center?.lon || 0;
+    const name = el.tags?.['name:en'] || el.tags?.name || el.tags?.brand || el.tags?.operator || 'Unknown Fuel Station';
+    const nameSi = el.tags?.['name:si'] || el.tags?.['brand:si'] || el.tags?.['operator:si'];
+    const nameTa = el.tags?.['name:ta'] || el.tags?.['brand:ta'] || el.tags?.['operator:ta'];
+    const address = el.tags?.['addr:street'] ? `${el.tags['addr:street']}, ${el.tags['addr:city'] || ''}` : 'Address not available';
+    const addressSi = el.tags?.['addr:street:si'] ? `${el.tags['addr:street:si']}, ${el.tags['addr:city:si'] || ''}` : undefined;
+    const addressTa = el.tags?.['addr:street:ta'] ? `${el.tags['addr:street:ta']}, ${el.tags['addr:city:ta'] || ''}` : undefined;
+
+    return {
+      id: el.id.toString(),
+      name, nameSi, nameTa,
+      coordinates: [lat, lon] as [number, number],
+      address, addressSi, addressTa,
+      status: 'out-of-stock' as FuelStatus,
+      fuelTypes: {},
+    };
+  });
+
+  const seedResponse = await fetch(`${API_URL}/stations/seed`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': authHeader,
+    },
+    body: JSON.stringify({ stations: osmStations }),
+  });
+
+  if (!seedResponse.ok) {
+    const err = await seedResponse.json().catch(() => ({}));
+    throw new Error((err as any).error || `Seed failed: ${seedResponse.status}`);
+  }
+
+  return { success: true, count: osmStations.length, message: `Seeded ${osmStations.length} stations from OSM` };
+}
+
+// Reset all station data — admin only
+export async function adminResetStations(authHeader: string): Promise<void> {
+  const response = await fetch(`${API_URL}/stations/reset`, {
+    method: 'POST',
+    headers: { 'Authorization': authHeader },
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error((err as any).error || `Reset failed: ${response.status}`);
   }
 }

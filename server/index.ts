@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 import { db } from './db.js';
 import { stations, fuelUpdates, stationRequests } from './schema.js';
 import { eq, asc } from 'drizzle-orm';
@@ -8,17 +9,19 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-fallback-secret-change-in-production';
+const JWT_EXPIRES_IN = '8h';
+
 const app = express();
 app.use(cors({
   origin: [
+    'https://fuelalert.online',
     'http://localhost:5173',
     'http://localhost:4173',
     process.env.FRONTEND_URL || '',
+    /\.fuelalert\.online$/,
     /\.vercel\.app$/,
-    /\.up\.railway\.app$/,
-    'https://fuelalert.online',
-    'https://www.fuelalert.online',
-    // Railway-hosted frontends
+    /\.up\.railway\.app$/, // Railway-hosted frontends
   ].filter(Boolean),
   credentials: true,
 }));
@@ -26,6 +29,23 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' })); // Allow large payloads for seeding
 
 const PORT = process.env.PORT || 3000;
+
+// Admin Authentication Middleware (JWT)
+const checkAdminAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    (req as any).admin = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+};
 
 // GET all stations
 app.get('/api/stations', async (req, res) => {
@@ -106,8 +126,8 @@ app.post('/api/stations/:id/updates', async (req, res) => {
   }
 });
 
-// POST to seed multiple stations initially
-app.post('/api/stations/seed', async (req, res) => {
+// Admin - Seed stations from OSM data (admin only)
+app.post('/api/stations/seed', checkAdminAuth, async (req, res) => {
   try {
     const { stations: newStations } = req.body;
     if (!newStations || !Array.isArray(newStations)) {
@@ -152,8 +172,8 @@ app.post('/api/stations/seed', async (req, res) => {
   }
 });
 
-// POST to reset all mock data
-app.post('/api/stations/reset', async (req, res) => {
+// Admin - Reset all station data (admin only)
+app.post('/api/stations/reset', checkAdminAuth, async (req, res) => {
   try {
     // Clear all updates
     await db.delete(fuelUpdates);
@@ -180,26 +200,16 @@ app.post('/api/stations/reset', async (req, res) => {
   }
 });
 
-// Admin Authentication Middleware (Basic)
-const checkAdminAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const [username, password] = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
-  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    next();
-  } else {
-    res.status(401).json({ error: 'Invalid credentials' });
-  }
-};
-
-// Admin Login Check
+// Admin Login — returns a signed JWT on success
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    res.json({ success: true });
+    const token = jwt.sign(
+      { username, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+    res.json({ success: true, token });
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
   }
@@ -209,7 +219,7 @@ app.post('/api/admin/login', (req, res) => {
 app.post('/api/admin/stations', checkAdminAuth, async (req, res) => {
   try {
     const { name, nameSi, nameTa, lat, lng, address, addressSi, addressTa, stationCode } = req.body;
-
+    
     const [newStation] = await db.insert(stations).values({
       name,
       nameSi,
@@ -313,7 +323,7 @@ app.patch('/api/admin/requests/:id', checkAdminAuth, async (req, res) => {
 app.post('/api/feedback/request', async (req, res) => {
   try {
     const { type, stationId, name, nameSi, nameTa, lat, lng, address, addressSi, addressTa, stationCode, message } = req.body;
-
+    
     // Ensure stationId is either a number or null
     const parsedStationId = stationId && stationId !== "" ? parseInt(stationId.toString()) : null;
 

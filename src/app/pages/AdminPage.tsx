@@ -14,10 +14,12 @@ import {
   ClipboardList,
   Check,
   Ban,
-  MessageSquare
+  MessageSquare,
+  RefreshCw,
+  RotateCcw
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { fetchFuelStations } from '../services/osmService';
+import { fetchFuelStations, adminSeedFromOSM, adminResetStations } from '../services/osmService';
 import { API_BASE } from '../services/api';
 import type { FuelStation } from '../types';
 import { toast } from 'sonner';
@@ -112,8 +114,8 @@ export function AdminPage() {
       });
 
       if (response.ok) {
-        const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
-        sessionStorage.setItem('adminAuth', authHeader);
+        const data = await response.json();
+        sessionStorage.setItem('adminAuth', `Bearer ${data.token}`);
         setIsAuthenticated(true);
         fetchStations();
         toast.success('Authenticated successfully');
@@ -129,6 +131,33 @@ export function AdminPage() {
     sessionStorage.removeItem('adminAuth');
     setIsAuthenticated(false);
     setStations([]);
+  };
+
+  const handleSeedFromOSM = async () => {
+    const auth = sessionStorage.getItem('adminAuth');
+    if (!auth) return;
+    setIsLoading(true);
+    try {
+      const result = await adminSeedFromOSM(auth);
+      toast.success(`Seeded ${result.count} stations from OSM`);
+      fetchStations();
+    } catch (error: any) {
+      toast.error(error.message || 'Seed failed');
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetStations = async () => {
+    if (!confirm('This will reset ALL station statuses to defaults. Continue?')) return;
+    const auth = sessionStorage.getItem('adminAuth');
+    if (!auth) return;
+    try {
+      await adminResetStations(auth);
+      toast.success('All station data reset to defaults');
+      fetchStations();
+    } catch (error: any) {
+      toast.error(error.message || 'Reset failed');
+    }
   };
 
   const startEdit = (station: FuelStation) => {
@@ -325,8 +354,14 @@ export function AdminPage() {
             <h1 className="text-3xl font-bold tracking-tight">Station Management</h1>
             <p className="text-muted-foreground">Add, edit, or remove fuel stations from across the island.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <Button variant="outline" onClick={handleLogout}>Logout</Button>
+            <Button variant="outline" onClick={handleResetStations} className="text-orange-500 border-orange-500/30 hover:bg-orange-500/10">
+              <RotateCcw className="w-4 h-4 mr-2" /> Reset Data
+            </Button>
+            <Button variant="outline" onClick={handleSeedFromOSM} className="text-green-500 border-green-500/30 hover:bg-green-500/10">
+              <RefreshCw className="w-4 h-4 mr-2" /> Seed from OSM
+            </Button>
             <Button onClick={startAdd} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" /> Add Station
             </Button>
