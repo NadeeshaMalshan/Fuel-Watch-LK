@@ -115,6 +115,7 @@ export function SettingsPage() {
                     </button>
                   ))}
                 </div>
+              </section>
 
               {/* About Section */}
               <section className="space-y-4">
