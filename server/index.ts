@@ -16,7 +16,7 @@ app.use(cors({
     process.env.FRONTEND_URL || '',
     /\.vercel\.app$/,
     /\.up\.railway\.app$/,
-    'fuelalert.online',
+    'http://fuelalert.online',
     // Railway-hosted frontends
   ].filter(Boolean),
   credentials: true,
