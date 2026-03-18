@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Moon, Sun, Globe, ChevronRight, CheckCircle2, Home, Settings, MessageSquare, ExternalLink, Code } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Globe, ChevronRight, CheckCircle2, Home, Settings, MessageSquare, ExternalLink, Code, Info } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { toast, Toaster } from 'sonner';
 import { MapView } from '../components/MapView';
@@ -121,52 +121,29 @@ export function SettingsPage() {
                 </div>
               </section>
 
-              {/* Info Section */}
+
+
+              {/* About Section */}
               <section className="space-y-4">
                 <h2 className={`text-[10px] font-bold uppercase tracking-[0.2em] px-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
-                  {t('settings.info')}
+                  {t('settings.about')}
                 </h2>
-                <div className={`rounded-3xl border overflow-hidden shadow-sm divide-y transition-colors duration-500
-                  ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700/50 divide-gray-700/50' : 'bg-white border-gray-100 divide-gray-50'}
+                <div className={`rounded-3xl border overflow-hidden shadow-sm transition-colors duration-500
+                  ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-100'}
                 `}>
-                  <div className="p-5">
-                    <p className="font-bold text-sm mb-4">{t('settings.developedBy')}</p>
-                    <div className="space-y-3">
-                      <a 
-                        href="https://www.nadeesha.site/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-gray-50 border-gray-100 hover:bg-blue-50 hover:border-blue-100'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-indigo-500/10 rounded-lg">
-                            <Code className="w-4 h-4 text-indigo-500" />
-                          </div>
-                          <span className="text-sm font-semibold">Nadeesha Malshan</span>
-                        </div>
-                        <ExternalLink className="w-3 h-3 opacity-40" />
-                      </a>
-                      <a 
-                        href="https://www.jayashan.online/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-gray-50 border-gray-100 hover:bg-blue-50 hover:border-blue-100'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-500/10 rounded-lg">
-                            <Code className="w-4 h-4 text-blue-500" />
-                          </div>
-                          <span className="text-sm font-semibold">Jayashan Manodya</span>
-                        </div>
-                        <ExternalLink className="w-3 h-3 opacity-40" />
-                      </a>
-                    </div>
-                  </div>
                   <button
                     onClick={() => navigate('/about')}
                     className={`w-full flex items-center justify-between p-5 transition-all ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`}
                   >
-                    <p className="font-bold text-sm">{t('settings.about')}</p>
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-2xl ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                        <Info className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-sm">Fuel Watch LK</p>
+                        <p className={`text-[10px] font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>About this project</p>
+                      </div>
+                    </div>
                     <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
                   </button>
                 </div>
