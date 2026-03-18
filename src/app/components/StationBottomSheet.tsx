@@ -70,7 +70,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
       <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300">
         <div className="mx-auto max-w-2xl px-4 pb-4">
           <div className={`backdrop-blur-2xl border transition-colors duration-500 rounded-[2.5rem] shadow-2xl overflow-hidden
-            ${theme === 'dark' ? 'bg-[#1a1a1a]/90 border-[#2a2a2a]' : 'bg-white/95 border-gray-200/50'}
+            ${theme === 'dark' ? 'bg-card/90 border-border' : 'bg-white/95 border-gray-200/50'}
           `}>
             {/* Handle */}
             <div className="flex justify-center pt-4 pb-2">
@@ -139,13 +139,13 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {/* Petrol Queue */}
                 <div className={`p-4 rounded-3xl border transition-colors duration-500
-                  ${theme === 'dark' ? 'bg-blue-500/5 border-blue-500/10' : 'bg-blue-50 border-blue-100'}
+                  ${theme === 'dark' ? 'bg-card/40 border-border' : 'bg-blue-50 border-blue-100'}
                 `}>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-blue-500/10 text-blue-400' : 'bg-white text-blue-500'} shadow-sm`}>
+                    <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-background text-foreground' : 'bg-white text-blue-500'} shadow-sm`}>
                       <Fuel className="w-3.5 h-3.5" />
                     </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-foreground' : 'text-blue-600'}`}>
                       Petrol {t('station.queue')}
                     </span>
                   </div>
@@ -153,7 +153,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                     <p className={`text-sm font-black ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
                       {station.petrolQueueLength ?? 0} <span className="text-[10px] font-bold opacity-50">{t('station.vehicles')}</span>
                     </p>
-                    <p className={`text-xs font-bold ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>
+                    <p className={`text-xs font-bold ${theme === 'dark' ? 'text-foreground/80' : 'text-blue-700'}`}>
                       {station.petrolWaitingTime ?? 0} <span className="text-[10px] opacity-60">mins</span>
                     </p>
                   </div>
@@ -161,13 +161,13 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
 
                 {/* Diesel Queue */}
                 <div className={`p-4 rounded-3xl border transition-colors duration-500
-                  ${theme === 'dark' ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-100'}
+                  ${theme === 'dark' ? 'bg-card/40 border-border' : 'bg-orange-50 border-orange-100'}
                 `}>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-orange-500/10 text-orange-400' : 'bg-white text-orange-500'} shadow-sm`}>
+                    <div className={`p-2 rounded-xl ${theme === 'dark' ? 'bg-background text-foreground' : 'bg-white text-orange-500'} shadow-sm`}>
                       <Fuel className="w-3.5 h-3.5" />
                     </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-foreground' : 'text-orange-600'}`}>
                       Diesel {t('station.queue')}
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: Stat
                     <p className={`text-sm font-black ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}>
                       {station.dieselQueueLength ?? 0} <span className="text-[10px] font-bold opacity-50">{t('station.vehicles')}</span>
                     </p>
-                    <p className={`text-xs font-bold ${theme === 'dark' ? 'text-orange-300' : 'text-orange-700'}`}>
+                    <p className={`text-xs font-bold ${theme === 'dark' ? 'text-foreground/80' : 'text-orange-700'}`}>
                       {station.dieselWaitingTime ?? 0} <span className="text-[10px] opacity-60">mins</span>
                     </p>
                   </div>

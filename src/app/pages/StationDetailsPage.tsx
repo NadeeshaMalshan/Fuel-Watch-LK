@@ -49,11 +49,10 @@ export function StationDetailsPage() {
     } else if (fuelStatuses.some(s => s === 'limited')) {
       newStatus = 'limited';
     }
-    
     if (newStatus !== formData.status) {
       setFormData(prev => ({ ...prev, status: newStatus }));
     }
-  }, [formData.petrol92, formData.petrol95, formData.diesel, formData.kerosene]);
+  }, [formData.petrol92, formData.petrol95, formData.autoDiesel, formData.superDiesel, formData.kerosene]);
 
   if (isLoading) {
     return (
@@ -202,9 +201,9 @@ export function StationDetailsPage() {
   };
 
   return (
-    <div className={`h-full overflow-y-auto ${theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500 scroll-smooth`}>
+    <div className={`h-full overflow-y-auto ${theme === 'dark' ? 'bg-background text-foreground' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500 scroll-smooth`}>
       {/* Header */}
-      <header className={`sticky top-0 z-50 backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border-b shadow-sm`}>
+      <header className={`sticky top-0 z-50 backdrop-blur-xl ${theme === 'dark' ? 'bg-background/80 border-border' : 'bg-white/80 border-gray-200/50'} border-b shadow-sm`}>
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -225,7 +224,7 @@ export function StationDetailsPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Station Info Card */}
-        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border shadow-lg`}>
+        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-card/80 border-border' : 'bg-white/80 border-gray-200/50'} border shadow-lg`}>
           <div className="flex items-start gap-4 mb-4">
             <div className={`p-3 rounded-xl ${statusConfig.bgColor} ${statusConfig.borderColor} border`}>
               <Fuel className={`w-8 h-8 ${statusConfig.textColor}`} />
@@ -245,7 +244,7 @@ export function StationDetailsPage() {
           {/* Real-time Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {/* Petrol Queue */}
-            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-blue-900/10 border-blue-900/20' : 'bg-blue-50 border-blue-100'} border`}>
+            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-card/40 border-border' : 'bg-blue-50 border-blue-100'} border`}>
               <div className="flex items-center gap-2 mb-2">
                 <Fuel className={`w-4 h-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
                 <span className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
@@ -265,7 +264,7 @@ export function StationDetailsPage() {
             </div>
 
             {/* Diesel Queue */}
-            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-orange-900/10 border-orange-900/20' : 'bg-orange-50 border-orange-100'} border`}>
+            <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-card/20 border-border' : 'bg-orange-50 border-orange-100'} border`}>
               <div className="flex items-center gap-2 mb-2">
                 <Fuel className={`w-4 h-4 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
                 <span className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>
@@ -311,7 +310,7 @@ export function StationDetailsPage() {
 
           {/* Inline Update Form */}
           {isUpdating && (
-            <form onSubmit={handleSubmit} className={`mt-8 space-y-6 pt-6 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'} animate-in slide-in-from-top-4 duration-300`}>
+            <form onSubmit={handleSubmit} className={`mt-8 space-y-6 pt-6 border-t ${theme === 'dark' ? 'border-border' : 'border-gray-100'} animate-in slide-in-from-top-4 duration-300`}>
                <h3 className="text-lg font-bold flex items-center gap-2">
                  <PlusCircle className="w-5 h-5 text-blue-500" />
                  Submit Fresh Update
@@ -328,7 +327,7 @@ export function StationDetailsPage() {
                    value={formData.userName}
                    onChange={e => setFormData({ ...formData, userName: e.target.value })}
                    placeholder="Enter your name"
-                   className={theme === 'dark' ? 'bg-gray-800 border-gray-700' : ''}
+                   className={theme === 'dark' ? 'bg-card border-border' : ''}
                  />
                </div>
 
@@ -336,9 +335,9 @@ export function StationDetailsPage() {
                <div className="space-y-4">
                  <Label className="text-sm font-bold">Fuel Availability</Label>
                  <div className="grid gap-4">
-                   {['petrol92', 'petrol95', 'diesel', 'kerosene'].map((fuel) => (
-                     <div key={fuel} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-gray-50/50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-700">
-                       <span className="text-xs font-bold uppercase tracking-wider">{t(`fuel.${fuel}`)}</span>
+                   {['petrol92', 'petrol95', 'autoDiesel', 'superDiesel', 'kerosene'].map((fuel) => (
+                     <div key={fuel} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-gray-50/50 dark:bg-card/40 border border-gray-100 dark:border-border">
+                       <span className="text-xs font-bold uppercase tracking-wider">{t(fuel === 'autoDiesel' ? 'fuel.diesel' : fuel === 'superDiesel' ? 'fuel.superDiesel' : `fuel.${fuel}`)}</span>
                        <div className="flex gap-1.5 flex-wrap">
                          <StatusButton value="available" label="Available" fieldName={fuel as any} />
                          <StatusButton value="limited" label="Limited" fieldName={fuel as any} />
@@ -351,10 +350,10 @@ export function StationDetailsPage() {
                </div>
 
                 {/* Petrol Queue */}
-                <div className="p-4 rounded-2xl bg-blue-50/30 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 space-y-4">
+                <div className="p-4 rounded-2xl bg-blue-50/30 dark:bg-card/20 border border-blue-100 dark:border-border space-y-4">
                   <div className="flex items-center gap-2">
                     <Fuel className="w-4 h-4 text-blue-500" />
-                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">Petrol Queue Details</span>
+                    <span className="text-sm font-bold text-blue-600 dark:text-foreground">Petrol Queue Details</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -363,7 +362,7 @@ export function StationDetailsPage() {
                         type="number" 
                         value={formData.petrolQueueLength} 
                         onChange={e => setFormData({ ...formData, petrolQueueLength: parseInt(e.target.value) || 0 })}
-                        className={theme === 'dark' ? 'bg-gray-800 border-gray-700 h-9' : 'h-9'}
+                        className={theme === 'dark' ? 'bg-card border-border h-9' : 'h-9'}
                       />
                     </div>
                     <div className="space-y-2">
@@ -372,17 +371,17 @@ export function StationDetailsPage() {
                         type="number" 
                         value={formData.petrolWaitingTime} 
                         onChange={e => setFormData({ ...formData, petrolWaitingTime: parseInt(e.target.value) || 0 })}
-                        className={theme === 'dark' ? 'bg-gray-800 border-gray-700 h-9' : 'h-9'}
+                        className={theme === 'dark' ? 'bg-card border-border h-9' : 'h-9'}
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Diesel Queue */}
-                <div className="p-4 rounded-2xl bg-orange-50/30 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 space-y-4">
+                <div className="p-4 rounded-2xl bg-orange-50/30 dark:bg-card/20 border border-orange-100 dark:border-border space-y-4">
                   <div className="flex items-center gap-2">
                     <Fuel className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm font-bold text-orange-600 dark:text-orange-400">Diesel Queue Details</span>
+                    <span className="text-sm font-bold text-orange-600 dark:text-foreground">Diesel Queue Details</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -391,7 +390,7 @@ export function StationDetailsPage() {
                         type="number" 
                         value={formData.dieselQueueLength} 
                         onChange={e => setFormData({ ...formData, dieselQueueLength: parseInt(e.target.value) || 0 })}
-                        className={theme === 'dark' ? 'bg-gray-800 border-gray-700 h-9' : 'h-9'}
+                        className={theme === 'dark' ? 'bg-card border-border h-9' : 'h-9'}
                       />
                     </div>
                     <div className="space-y-2">
@@ -400,7 +399,7 @@ export function StationDetailsPage() {
                         type="number" 
                         value={formData.dieselWaitingTime} 
                         onChange={e => setFormData({ ...formData, dieselWaitingTime: parseInt(e.target.value) || 0 })}
-                        className={theme === 'dark' ? 'bg-gray-800 border-gray-700 h-9' : 'h-9'}
+                        className={theme === 'dark' ? 'bg-card border-border h-9' : 'h-9'}
                       />
                     </div>
                   </div>
@@ -412,7 +411,7 @@ export function StationDetailsPage() {
                    value={formData.message} 
                    onChange={e => setFormData({ ...formData, message: e.target.value })}
                    placeholder="Any more info?"
-                   className={theme === 'dark' ? 'bg-gray-800 border-gray-700' : ''}
+                   className={theme === 'dark' ? 'bg-card border-border' : ''}
                  />
                </div>
 
@@ -442,7 +441,7 @@ export function StationDetailsPage() {
 
 
         {/* Fuel Availability */}
-        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border shadow-sm`}>
+        <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-card/80 border-border' : 'bg-white/80 border-gray-200/50'} border shadow-sm`}>
           <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>{t('details.availability')}</h2>
           <div className="grid grid-cols-2 gap-3">
             {station.fuelTypes?.petrol92 && (

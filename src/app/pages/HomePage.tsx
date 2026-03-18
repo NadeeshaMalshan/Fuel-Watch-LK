@@ -253,7 +253,7 @@ export function HomePage() {
         {/* Dashboard Side Panel - Hidden on small screens if map is active */}
         <aside className={`
           flex-col w-full lg:w-[400px] xl:w-[450px] lg:h-full backdrop-blur-2xl border-r z-40 transition-colors duration-500
-          ${theme === 'dark' ? 'bg-[#1a1a1a]/80 border-[#2a2a2a]' : 'bg-white/40 border-gray-200/50'}
+          ${theme === 'dark' ? 'bg-card/80 border-border' : 'bg-white/40 border-gray-200/50'}
           ${viewMode === 'list' ? 'flex' : 'hidden lg:flex'}
         `}>
           <div className="flex-1 overflow-y-auto">
@@ -331,7 +331,7 @@ export function HomePage() {
               </div>
 
               {/* Community Feedback Prompt */}
-              <div className={`p-5 rounded-3xl border border-dashed flex flex-col items-center text-center gap-3 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a]/40 border-gray-700' : 'bg-blue-50/30 border-blue-200'}`}>
+              <div className={`p-5 rounded-3xl border border-dashed flex flex-col items-center text-center gap-3 transition-colors duration-500 ${theme === 'dark' ? 'bg-card/40 border-gray-700' : 'bg-blue-50/30 border-blue-200'}`}>
                 <div className="flex -space-x-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                     <Plus className="w-4 h-4" />
@@ -382,7 +382,7 @@ export function HomePage() {
                       state={{ station }}
                       className="block group"
                     >
-                      <div className={`p-5 rounded-3xl border transition-all duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a] border-[#2a2a2a] hover:bg-[#222] hover:border-[#333]' : 'bg-white border-gray-50 hover:border-blue-100 hover:shadow-2xl hover:shadow-blue-500/10'}`}>
+                      <div className={`p-5 rounded-3xl border transition-all duration-500 ${theme === 'dark' ? 'bg-card border-border hover:bg-accent/10 hover:border-accent/20' : 'bg-white border-gray-50 hover:border-blue-100 hover:shadow-2xl hover:shadow-blue-500/10'}`}>
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex-1 pr-2">
                             <h3 className={`font-bold transition-colors line-clamp-1 ${theme === 'dark' ? 'text-gray-100 group-hover:text-white' : 'text-gray-900 group-hover:text-blue-600'}`}>{localize(station, 'name')} {station.stationCode ? `(${station.stationCode})` : ''}</h3>
@@ -391,13 +391,13 @@ export function HomePage() {
                           <div className={`
                             px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter
                             ${station.status === 'available' 
-                              ? (theme === 'dark' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-green-100 text-green-700') 
+                              ? (theme === 'dark' ? 'bg-card border-green-500/40 text-green-400' : 'bg-green-100 text-green-700') 
                               : ''}
                             ${station.status === 'limited' 
-                              ? (theme === 'dark' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-amber-100 text-amber-700') 
+                              ? (theme === 'dark' ? 'bg-card border-amber-500/40 text-amber-400' : 'bg-amber-100 text-amber-700') 
                               : ''}
                             ${station.status === 'out-of-stock' 
-                              ? (theme === 'dark' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-100 text-red-700') 
+                              ? (theme === 'dark' ? 'bg-card border-red-500/40 text-red-400' : 'bg-red-100 text-red-700') 
                               : ''}
                           `}>
                             {station.status === 'available' ? t('status.available') : station.status === 'limited' ? t('status.limited') : t('status.out-of-stock')}
@@ -452,7 +452,7 @@ export function HomePage() {
                     </Link>
                   ))}
                   {!isLoading && sortedStations.length === 0 && (
-                    <div className={`text-center py-20 rounded-3xl border border-dashed transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a] border-[#2a2a2a]' : 'bg-gray-50/50 border-gray-200'}`}>
+                    <div className={`text-center py-20 rounded-3xl border border-dashed transition-colors duration-500 ${theme === 'dark' ? 'bg-card border-border' : 'bg-gray-50/50 border-gray-200'}`}>
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm transition-colors ${theme === 'dark' ? 'bg-gray-800 text-gray-600' : 'bg-white text-gray-300'}`}>
                         <Search className="w-6 h-6" />
                       </div>
@@ -466,7 +466,7 @@ export function HomePage() {
           </div>
 
           {/* Desktop Side Panel Footer - Integrated Navigation */}
-          <div className={`p-4 border-t hidden lg:block transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] border-[#2a2a2a]' : 'bg-white/50 border-gray-100'}`}>
+          <div className={`p-4 border-t hidden lg:block transition-colors duration-500 ${theme === 'dark' ? 'bg-[#121212] border-border' : 'bg-white/50 border-gray-100'}`}>
             <div className="flex items-center justify-between px-2">
               <Link to="/" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600'}`}>
                 <Home className="w-5 h-5" />
@@ -490,7 +490,7 @@ export function HomePage() {
           <div className="absolute top-8 left-1/2 -translate-x-1/2 z-1000 w-full max-w-xl px-4 hidden lg:block">
             <div className="relative group">
               <div className="absolute inset-x-0 -bottom-4 h-8 bg-black/5 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
-              <div className={`relative flex items-center backdrop-blur-3xl border rounded-4xl px-6 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 focus-within:ring-2 focus-within:ring-white/20 focus-within:scale-[1.02] group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] ${theme === 'dark' ? 'bg-[#1a1a1a]/90 border-[#2a2a2a] focus-within:bg-[#1a1a1a]' : 'bg-white/80 border-white/50 focus-within:bg-white'}`}>
+              <div className={`relative flex items-center backdrop-blur-3xl border rounded-4xl px-6 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 focus-within:ring-2 focus-within:ring-white/20 focus-within:scale-[1.02] group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] ${theme === 'dark' ? 'bg-card/90 border-border focus-within:bg-card' : 'bg-white/80 border-white/50 focus-within:bg-white'}`}>
                 <Search className={`w-5 h-5 ${theme === 'dark' ? 'text-gray-500' : 'text-blue-500'}`} />
                 <input
                   type="text"
@@ -513,7 +513,7 @@ export function HomePage() {
 
               {/* Desktop Suggestions Dropdown */}
               {isSearchFocused && suggestions.length > 0 && (
-                <div className={`absolute top-full left-0 right-0 mt-3 backdrop-blur-2xl rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] border overflow-hidden z-2000 animate-in fade-in slide-in-from-top-4 duration-300 ${theme === 'dark' ? 'bg-[#1a1a1a]/95 border-[#2a2a2a] shadow-black/60' : 'bg-white/90 border-white/50'}`}>
+                <div className={`absolute top-full left-0 right-0 mt-3 backdrop-blur-2xl rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] border overflow-hidden z-2000 animate-in fade-in slide-in-from-top-4 duration-300 ${theme === 'dark' ? 'bg-card/95 border-border shadow-black/60' : 'bg-white/90 border-white/50'}`}>
                   <div className="p-2 space-y-1">
                     {suggestions.map((suggestion) => (
                       <button
@@ -544,7 +544,7 @@ export function HomePage() {
 
           {/* Map View Toggle (Mobile only) */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-1000 lg:hidden">
-            <div className={`flex p-1.5 backdrop-blur-2xl border rounded-[2rem] shadow-2xl transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a]/95 border-[#2a2a2a] shadow-black/60' : 'bg-white/90 border-white/50'}`}>
+            <div className={`flex p-1.5 backdrop-blur-2xl border rounded-[2rem] shadow-2xl transition-colors duration-500 ${theme === 'dark' ? 'bg-card/95 border-border shadow-black/60' : 'bg-white/90 border-white/50'}`}>
               <button
                 onClick={() => setViewMode('map')}
                 className={`flex items-center gap-2 px-7 py-3 rounded-[1.5rem] text-sm font-black transition-all duration-500 ${viewMode === 'map' ? (theme === 'dark' ? 'bg-white/15 text-white shadow-xl shadow-black/20' : 'bg-gray-900 text-white shadow-xl shadow-black/20') : (theme === 'dark' ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:bg-white')}`}
@@ -584,7 +584,7 @@ export function HomePage() {
 
           {isLoading && (
             <div className={`absolute inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-xs transition-all duration-1000 ${theme === 'dark' ? 'bg-black/40' : 'bg-white/20'}`}>
-              <div className={`p-8 rounded-[3rem] backdrop-blur-2xl shadow-[0_30px_100px_rgba(0,0,0,0.15)] flex flex-col items-center border animate-in zoom-in-95 duration-500 ${theme === 'dark' ? 'bg-[#1a1a1a]/95 border-[#2a2a2a]' : 'bg-white/90 border-white/50'}`}>
+              <div className={`p-8 rounded-[3rem] backdrop-blur-2xl shadow-[0_30px_100px_rgba(0,0,0,0.15)] flex flex-col items-center border animate-in zoom-in-95 duration-500 ${theme === 'dark' ? 'bg-card/95 border-border' : 'bg-white/90 border-white/50'}`}>
                 <div className="relative mb-6">
                   <div className={`absolute inset-0 blur-2xl opacity-20 animate-pulse ${theme === 'dark' ? 'bg-gray-400' : 'bg-blue-500'}`} />
                   <Loader2 className={`w-12 h-12 animate-spin relative ${theme === 'dark' ? 'text-gray-300' : 'text-blue-600'}`} />
