@@ -269,4 +269,18 @@
     margin: 0 !important;
     line-height: inherit !important;
   }
+
+  /* Mobile: Leaflet zoom (+/-) — lower on screen (above bottom nav, easier to tap) */
+  @media (max-width: 1023px) {
+    .leaflet-top.leaflet-left {
+      top: auto !important;
+      bottom: 9.75rem !important;
+      left: 10px !important;
+      padding-top: 0 !important;
+    }
+
+    .leaflet-top.leaflet-left .leaflet-control {
+      margin-top: 0 !important;
+    }
+  }
 }
