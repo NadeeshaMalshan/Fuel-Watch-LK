@@ -15,7 +15,9 @@ app.use(cors({
     'http://localhost:4173',
     process.env.FRONTEND_URL || '',
     /\.vercel\.app$/,
-    /\.up\.railway\.app$/, // Railway-hosted frontends
+    /\.up\.railway\.app$/,
+    'fuelalert.online',
+    // Railway-hosted frontends
   ].filter(Boolean),
   credentials: true,
 }));
@@ -206,7 +208,7 @@ app.post('/api/admin/login', (req, res) => {
 app.post('/api/admin/stations', checkAdminAuth, async (req, res) => {
   try {
     const { name, nameSi, nameTa, lat, lng, address, addressSi, addressTa, stationCode } = req.body;
-    
+
     const [newStation] = await db.insert(stations).values({
       name,
       nameSi,
@@ -310,7 +312,7 @@ app.patch('/api/admin/requests/:id', checkAdminAuth, async (req, res) => {
 app.post('/api/feedback/request', async (req, res) => {
   try {
     const { type, stationId, name, nameSi, nameTa, lat, lng, address, addressSi, addressTa, stationCode, message } = req.body;
-    
+
     // Ensure stationId is either a number or null
     const parsedStationId = stationId && stationId !== "" ? parseInt(stationId.toString()) : null;
 
