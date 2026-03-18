@@ -134,7 +134,7 @@ export function SettingsPage() {
                         <Info className="w-5 h-5" />
                       </div>
                       <div className="text-left">
-                        <p className="font-bold text-sm">තෙල් Alert</p>
+                        <p className="font-bold text-sm">Fuel Alert</p>
                         <p className={`text-[10px] font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>About this project</p>
                       </div>
                     </div>

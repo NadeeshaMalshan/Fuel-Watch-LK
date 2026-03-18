@@ -17,17 +17,17 @@ import { translations } from '../data/translations';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('fuel-watch-theme');
+    const saved = localStorage.getItem('fuel-alert-theme');
     return (saved as Theme) || 'light';
   });
 
   const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('fuel-watch-lang');
+    const saved = localStorage.getItem('fuel-alert-lang');
     return (saved as Language) || 'en';
   });
 
   useEffect(() => {
-    localStorage.setItem('fuel-watch-theme', theme);
+    localStorage.setItem('fuel-alert-theme', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -36,7 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem('fuel-watch-lang', language);
+    localStorage.setItem('fuel-alert-lang', language);
   }, [language]);
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');

@@ -3,7 +3,7 @@ import type { Language } from '../types';
 export const translations: Record<Language, Record<string, string>> = {
   en: {
     // App Header
-    'app.title': 'තෙල් Alert',
+    'app.title': 'Fuel Alert',
     'app.subtitle': 'Real-time fuel availability',
     'app.location': 'Location',
     'app.search': 'Search stations...',
@@ -68,7 +68,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.darkMode': 'Dark Mode',
     'settings.language': 'Language',
     'settings.info': 'Information',
-    'settings.about': 'තෙල් Alert',
+    'settings.about': 'Fuel Alert',
     'settings.version': 'Version',
     'settings.developedBy': 'Developed By',
     'settings.enabled': 'Enabled',
@@ -106,7 +106,7 @@ export const translations: Record<Language, Record<string, string>> = {
   },
   si: {
     // App Header
-    'app.title': 'තෙල් Alert',
+    'app.title': 'Fuel Alert',
     'app.subtitle': 'ඉන්ධන ඇති නැති බව සජීවීව දැනගන්න',
     'app.location': 'ස්ථානය',
     'app.search': 'පිරවුම්හල් සොයන්න...',
@@ -171,7 +171,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.darkMode': 'අඳුරු මාදිලිය (Dark Mode)',
     'settings.language': 'භාෂාව',
     'settings.info': 'තොරතුරු',
-    'settings.about': 'තෙල් Alert ගැන',
+    'settings.about': 'Fuel Alert ගැන',
     'settings.version': 'සංස්කරණය',
     'settings.developedBy': 'නිර්මාණය කළේ',
     'settings.enabled': 'සක්‍රීයයි',
@@ -209,7 +209,7 @@ export const translations: Record<Language, Record<string, string>> = {
   },
   ta: {
     // App Header
-    'app.title': 'තෙල් Alert',
+    'app.title': 'Fuel Alert',
     'app.subtitle': 'உண்மையான எரிபொருள் இருப்பு விபரம்',
     'app.location': 'இடம்',
     'app.search': 'நிலையங்களைத் தேடுங்கள்...',
@@ -274,7 +274,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.darkMode': 'இரவு முறை',
     'settings.language': 'மொழி',
     'settings.info': 'தகவல்',
-    'settings.about': 'තෙල් Alert பற்றி',
+    'settings.about': 'Fuel Alert பற்றி',
     'settings.version': 'பதிப்பு',
     'settings.developedBy': 'உருவாக்கியவர்',
     'settings.enabled': 'செயலில் உள்ளது',

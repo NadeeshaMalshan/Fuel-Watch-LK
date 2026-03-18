@@ -4,10 +4,10 @@ import { useTheme } from '../context/ThemeContext';
 
 const aboutContent = {
   en: {
-    title: 'About තෙල් Alert',
+    title: 'About Fuel Alert',
     subtitle: 'Real-time Fuel Availability & Queue Tracker for Sri Lanka',
     description:
-      'තෙල් Alert is a community-powered platform designed to help citizens of Sri Lanka find fuel stations with available stock and minimal queues. During fuel shortages or high-demand periods, this tool provides real-time updates sourced directly from the public.',
+      'Fuel Alert is a community-powered platform designed to help citizens of Sri Lanka find fuel stations with available stock and minimal queues. During fuel shortages or high-demand periods, this tool provides real-time updates sourced directly from the public.',
     mission: 'Our Mission',
     missionText:
       'To provide accurate, timely, and community-sourced fuel availability information across Sri Lanka — reducing wasted time and helping people plan their journeys efficiently.',
@@ -26,10 +26,10 @@ const aboutContent = {
     openSourceText: 'This project is open source and community-driven.',
   },
   si: {
-    title: 'තෙල් Alert ගැන',
+    title: 'Fuel Alert ගැන',
     subtitle: 'ශ්‍රී ලංකාවේ ඉන්ධන ලබා ගත හැකි බව සජීවීව දැනගන්න',
     description:
-      'තෙල් Alert යනු ශ්‍රී ලංකාවේ ජනතාවට ඉන්ධන ඇති පිරවුම්හල් සහ අඩු පෝලිම් ඇති ස්ථාන සොයා ගැනීමට උදවු කිරීම සඳහා ප්‍රජා බලයෙන් ගොඩනැඟූ වේදිකාවකි. ඉන්ධන හිඟකම් හෝ ඉහළ ඉල්ලුම් කාල පරිච්ඡේද තුළ, මෙම මෙවලම ජනතාව විසින්ම සජීවීව ලබා දෙන යාවත්කාලීන තොරතුරු ලබා දෙයි.',
+      'Fuel Alert යනු ශ්‍රී ලංකාවේ ජනතාවට ඉන්ධන ඇති පිරවුම්හල් සහ අඩු පෝලිම් ඇති ස්ථාන සොයා ගැනීමට උදවු කිරීම සඳහා ප්‍රජා බලයෙන් ගොඩනැඟූ වේදිකාවකි. ඉන්ධන හිඟකම් හෝ ඉහළ ඉල්ලුම් කාල පරිච්ඡේද තුළ, මෙම මෙවලම ජනතාව විසින්ම සජීවීව ලබා දෙන යාවත්කාලීන තොරතුරු ලබා දෙයි.',
     mission: 'අපේ අරමුණ',
     missionText:
       'ශ්‍රී ලංකාව පුරා නිවැරදි, කාලෝචිත, ප්‍රජා-ප්‍රභවය ඉන්ධන ලබා ගැනීම් තොරතුරු ලබා දීම — නාස්ති වන කාලය අඩු කිරීම සහ ජනතාවට ඔවුන්ගේ ගමන් ඵලදායිව සැලසුම් කිරීමට උදව් කිරීම.',
@@ -48,10 +48,10 @@ const aboutContent = {
     openSourceText: 'මෙම ව්‍යාපෘතිය විවෘත කේත සහ ප්‍රජා-ප්‍රගාමිතාවෙන් යුක්ත වේ.',
   },
   ta: {
-    title: 'තෙල් Alert பற்றி',
+    title: 'Fuel Alert பற்றி',
     subtitle: 'இலங்கையில் எரிபொருள் கிடைக்கும் தன்மையை நேரடியாக அறியுங்கள்',
     description:
-      'තෙල් Alert என்பது இலங்கை குடிமக்கள் கையிருப்பு உள்ள எரிபொருள் நிலையங்கள் மற்றும் குறைந்த வரிசைகள் உள்ள இடங்களைக் கண்டறிய உதவும் ஒரு சமூக இயக்கப்படும் தளமாகும். எரிபொருள் பற்றாக்குறை அல்லது அதிக தேவை காலங்களில், இந்த கருவி பொதுமக்களிடமிருந்து நேரடியாக பெறப்பட்ட நேரடி புதுப்பிப்புகளை வழங்குகிறது.',
+      'Fuel Alert என்பது இலங்கை குடிமக்கள் கையிருப்பு உள்ள எரிபொருள் நிலையங்கள் மற்றும் குறைந்த வரிசைகள் உள்ள இடங்களைக் கண்டறிய உதவும் ஒரு சமூக இயக்கப்படும் தளமாகும். எரிபொருள் பற்றாக்குறை அல்லது அதிக தேவை காலங்களில், இந்த கருவி பொதுமக்களிடமிருந்து நேரடியாக பெறப்பட்ட நேரடி புதுப்பிப்புகளை வழங்குகிறது.',
     mission: 'எங்கள் நோக்கம்',
     missionText:
       'இலங்கை முழுவதும் துல்லியமான, சரியான நேரத்தில், சமூக மூலத்திலிருந்து பெறப்பட்ட எரிபொருள் கிடைக்கும் தகவல்களை வழங்குவது — வீணாகும் நேரத்தை குறைத்து மக்கள் தங்கள் பயணங்களை திறம்பட திட்டமிட உதவுவது.',
@@ -183,7 +183,7 @@ export function AboutPage() {
                   <Fuel className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight">තෙල් Alert</h2>
+                  <h2 className="text-2xl font-black tracking-tight">Fuel Alert</h2>
                   <p
                     className={`text-xs font-semibold mt-0.5 ${
                       isDark ? 'text-blue-400' : 'text-blue-500'
@@ -455,7 +455,7 @@ export function AboutPage() {
               isDark ? 'text-gray-700' : 'text-gray-300'
             }`}
           >
-            තෙල් Alert — {content.version} 1.2.0
+            Fuel Alert — {content.version} 1.2.0
           </p>
         </div>
       </main>

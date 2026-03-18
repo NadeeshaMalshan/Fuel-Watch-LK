@@ -1,5 +1,5 @@
 {
-  "name": "fuel-watch-lk-server",
+  "name": "fuel-alert-server",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

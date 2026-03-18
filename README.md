@@ -1,6 +1,6 @@
-# ⛽ තෙල් Alert (Fuel Watch LK) — Real-time Fuel Availability & Queue Tracking
+# ⛽ Fuel Alert — Real-time Fuel Availability & Queue Tracking
 
-**තෙල් Alert** is a community-driven, real-time platform designed to track fuel availability and queue lengths at fuel stations across Sri Lanka. Built with a modern tech stack to ensure high performance and premium aesthetics, it helps Sri Lankans make informed decisions during their daily commute.
+**Fuel Alert** is a community-driven, real-time platform designed to track fuel availability and queue lengths at fuel stations across Sri Lanka. Built with a modern tech stack to ensure high performance and premium aesthetics, it helps Sri Lankans make informed decisions during their daily commute.
 
 ---
 
@@ -116,8 +116,8 @@ Ensure you have **Node.js 18+** and a running **PostgreSQL** instance.
 
 ### **2. Installation**
 ```bash
-git clone https://github.com/JayashanManodya/Fuel-Watch-LK.git
-cd Fuel-Watch-LK
+git clone https://github.com/JayashanManodya/Fuel-Alert.git
+cd Fuel-Alert
 npm install
 ```
 

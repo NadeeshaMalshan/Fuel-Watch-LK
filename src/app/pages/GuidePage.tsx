@@ -24,7 +24,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const guideContent: Record<string, GuideData> = {
   en: {
-    title: 'How to Use තෙල් Alert',
+    title: 'How to Use Fuel Alert',
     subtitle: 'A step-by-step guide to finding fuel and contributing to the community',
     sections: [
       {
@@ -98,7 +98,7 @@ const guideContent: Record<string, GuideData> = {
     }
   },
   si: {
-    title: 'තෙල් Alert භාවිතා කරන්නේ කෙසේද',
+    title: 'Fuel Alert භාවිතා කරන්නේ කෙසේද',
     subtitle: 'ඉන්ධන සොයා ගැනීම සහ ප්‍රජාවට දායක වීම සඳහා පියවරෙන් පියවර මාර්ගෝපදේශය',
     sections: [
       {
@@ -172,7 +172,7 @@ const guideContent: Record<string, GuideData> = {
     }
   },
   ta: {
-    title: 'තෙල් Alert பயன்படுத்துவது எப்படி',
+    title: 'Fuel Alert பயன்படுத்துவது எப்படி',
     subtitle: 'எரிபொருளைக் கண்டறிவதற்கும் சமூகத்திற்கு பங்களிப்பதற்கும் படிப்படியான வழிகாட்டி',
     sections: [
       {
