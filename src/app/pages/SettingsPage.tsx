@@ -162,7 +162,10 @@ export function SettingsPage() {
                       </a>
                     </div>
                   </div>
-                  <button className={`w-full flex items-center justify-between p-5 transition-all ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`}>
+                  <button
+                    onClick={() => navigate('/about')}
+                    className={`w-full flex items-center justify-between p-5 transition-all ${theme === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`}
+                  >
                     <p className="font-bold text-sm">{t('settings.about')}</p>
                     <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
                   </button>
