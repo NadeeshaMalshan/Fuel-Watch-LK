@@ -67,13 +67,13 @@ npm run db:push
 ```
 
 ### **5. Run Locally**
-```bash
-# Start Backend
-npm run server
+The frontend is configured to use the **hosted API** on Railway (see `.env.development`). You only need:
 
-# Start Frontend (in a separate terminal)
+```bash
 npm run dev
 ```
+
+To use a **local API** instead: run `npm run server`, create `.env.development.local` with `VITE_API_URL=` (empty) or remove `VITE_API_URL` from `.env.development` for that session, then `npm run dev` (Vite proxies `/api` → `localhost:3000`).
 
 ---
 
