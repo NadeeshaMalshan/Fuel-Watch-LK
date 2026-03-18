@@ -389,8 +389,8 @@ export function AboutPage() {
             </div>
             <div className={`divide-y ${isDark ? 'divide-gray-700/50' : 'divide-gray-50'}`}>
               {[
-                { name: 'Jayashan Manodya', url: 'https://www.jayashan.online/', color: 'blue' },
                 { name: 'Nadeesha Malshan', url: 'https://www.nadeesha.site/', color: 'indigo' },
+                { name: 'Jayashan Manodya', url: 'https://www.jayashan.online/', color: 'blue' },
               ].map(({ name, url, color }) => (
                 <a
                   key={name}
