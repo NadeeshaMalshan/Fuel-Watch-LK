@@ -36,6 +36,21 @@ export function StationDetailsPage() {
   });
   
 
+  // Automatically calculate overall status based on individual fuel types
+  useEffect(() => {
+    const fuelStatuses = [formData.petrol92, formData.petrol95, formData.diesel, formData.kerosene];
+    
+    let newStatus: FuelStatus = 'out-of-stock';
+    if (fuelStatuses.some(s => s === 'available')) {
+      newStatus = 'available';
+    } else if (fuelStatuses.some(s => s === 'limited')) {
+      newStatus = 'limited';
+    }
+    
+    if (newStatus !== formData.status) {
+      setFormData(prev => ({ ...prev, status: newStatus }));
+    }
+  }, [formData.petrol92, formData.petrol95, formData.diesel, formData.kerosene]);
 
   if (isLoading) {
     return (
@@ -184,7 +199,7 @@ export function StationDetailsPage() {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500`}>
+    <div className={`h-full overflow-y-auto ${theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'} pb-24 transition-colors duration-500 scroll-smooth`}>
       {/* Header */}
       <header className={`sticky top-0 z-50 backdrop-blur-xl ${theme === 'dark' ? 'bg-gray-900/80 border-gray-800' : 'bg-white/80 border-gray-200/50'} border-b shadow-sm`}>
         <div className="max-w-4xl mx-auto px-4 py-4">
