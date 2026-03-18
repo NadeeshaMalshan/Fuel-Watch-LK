@@ -5,6 +5,7 @@ import { StationDetailsPage } from "./pages/StationDetailsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { AdminPage } from "./pages/AdminPage";
 import { FeedbackPage } from "./pages/FeedbackPage";
+import { AboutPage } from "./pages/AboutPage";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: SettingsPage },
       { path: "admin", Component: AdminPage },
       { path: "feedback", Component: FeedbackPage },
+      { path: "about", Component: AboutPage },
     ],
   },
 ]);
