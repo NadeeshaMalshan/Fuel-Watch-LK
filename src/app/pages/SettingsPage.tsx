@@ -133,20 +133,6 @@ export function SettingsPage() {
                     <p className="font-bold text-sm mb-4">{t('settings.developedBy')}</p>
                     <div className="space-y-3">
                       <a 
-                        href="https://www.jayashan.online/" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-gray-50 border-gray-100 hover:bg-blue-50 hover:border-blue-100'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-500/10 rounded-lg">
-                            <Code className="w-4 h-4 text-blue-500" />
-                          </div>
-                          <span className="text-sm font-semibold">Jayashan Manodya</span>
-                        </div>
-                        <ExternalLink className="w-3 h-3 opacity-40" />
-                      </a>
-                      <a 
                         href="https://www.nadeesha.site/" 
                         target="_blank" 
                         rel="noopener noreferrer"
@@ -157,6 +143,20 @@ export function SettingsPage() {
                             <Code className="w-4 h-4 text-indigo-500" />
                           </div>
                           <span className="text-sm font-semibold">Nadeesha Malshan</span>
+                        </div>
+                        <ExternalLink className="w-3 h-3 opacity-40" />
+                      </a>
+                      <a 
+                        href="https://www.jayashan.online/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-gray-50 border-gray-100 hover:bg-blue-50 hover:border-blue-100'}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-blue-500/10 rounded-lg">
+                            <Code className="w-4 h-4 text-blue-500" />
+                          </div>
+                          <span className="text-sm font-semibold">Jayashan Manodya</span>
                         </div>
                         <ExternalLink className="w-3 h-3 opacity-40" />
                       </a>
