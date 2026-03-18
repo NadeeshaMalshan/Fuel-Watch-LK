@@ -301,16 +301,6 @@ export function FeedbackPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Station Code (Optional)</Label>
-                      <Input 
-                        value={formData.stationCode} 
-                        onChange={e => setFormData({...formData, stationCode: e.target.value})} 
-                        placeholder="e.g. CP-001 or W- Colombo 10" 
-                        className={`h-14 px-5 rounded-2xl border-2 transition-all hover:bg-white/5 focus:ring-0 ${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
                       <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Full Address</Label>
                       <Input 
                         value={formData.address} 

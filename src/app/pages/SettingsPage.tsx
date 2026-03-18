@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Moon, Sun, Globe, ChevronRight, CheckCircle2, Home, Settings, MessageSquare, Info } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Globe, ChevronRight, CheckCircle2, Home, Settings, MessageSquare, Info, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { toast, Toaster } from 'sonner';
 import { MapView } from '../components/MapView';
@@ -155,11 +155,14 @@ export function SettingsPage() {
               <Link to="/" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
                 <Home className="w-5 h-5" />
               </Link>
-              <Link to="/settings" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600'}`}>
-                <Settings className="w-5 h-5" />
-              </Link>
               <Link to="/feedback" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
                 <MessageSquare className="w-5 h-5" />
+              </Link>
+              <Link to="/guide" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}>
+                <BookOpen className="w-5 h-5" />
+              </Link>
+              <Link to="/settings" className={`p-3 rounded-2xl transition-all hover:scale-110 ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600'}`}>
+                <Settings className="w-5 h-5" />
               </Link>
             </div>
           </div>

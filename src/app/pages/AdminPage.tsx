@@ -381,7 +381,7 @@ export function AdminPage() {
                       <p>No stations found.</p>
                     </div>
                   ) : (
-                    <div className="divide-y divide-gray-800/50">
+                    <div className="divide-y divide-gray-800/50 max-h-[600px] overflow-y-auto">
                       {filteredStations.map(station => (
                         <div key={station.id} className="p-4 flex items-center justify-between hover:bg-gray-800/10 transition-colors">
                           <div className="min-w-0 pr-4 flex-1">
