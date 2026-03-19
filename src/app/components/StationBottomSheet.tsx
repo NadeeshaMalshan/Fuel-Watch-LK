@@ -1,4 +1,4 @@
-import { Fuel, CheckCircle2, X, Navigation, User, Clock, MessageSquare } from 'lucide-react';
+import { Fuel, CheckCircle2, X, Navigation, Clock, MessageSquare } from 'lucide-react';
 import type { FuelStation } from '../types';
 import { Badge } from './ui/badge';
 import { useTheme } from '../context/ThemeContext';
