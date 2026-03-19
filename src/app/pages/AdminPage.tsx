@@ -43,6 +43,7 @@ export function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRequestsLoading, setIsRequestsLoading] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [resetActionType, setResetActionType] = useState<'reset' | 'seed'>('reset');
   const [resetPassword, setResetPassword] = useState('');
   const [isResetting, setIsResetting] = useState(false);
 
@@ -138,16 +139,28 @@ export function AdminPage() {
   };
 
   const handleSeedFromOSM = async () => {
+    if (!resetPassword) {
+      toast.error('Password is required');
+      return;
+    }
+
     const auth = sessionStorage.getItem('adminAuth');
     if (!auth) return;
-    setIsLoading(true);
+    
+    setIsResetting(true);
     try {
-      const result = await adminSeedFromOSM(auth);
+      const result = await adminSeedFromOSM(auth, resetPassword);
       toast.success(`Seeded ${result.count} stations from OSM`);
+      setIsResetModalOpen(false);
+      setResetPassword('');
       fetchStations();
+      
+      // Scroll to the top of the station list/management area after seeding
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error: any) {
       toast.error(error.message || 'Seed failed');
-      setIsLoading(false);
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -370,10 +383,10 @@ export function AdminPage() {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <Button variant="outline" onClick={handleLogout}>Logout</Button>
-            <Button variant="outline" onClick={() => setIsResetModalOpen(true)} className="text-orange-500 border-orange-500/30 hover:bg-orange-500/10">
+            <Button variant="outline" onClick={() => { setResetActionType('reset'); setIsResetModalOpen(true); }} className="text-orange-500 border-orange-500/30 hover:bg-orange-500/10">
               <RotateCcw className="w-4 h-4 mr-2" /> Reset Data
             </Button>
-            <Button variant="outline" onClick={handleSeedFromOSM} className="text-green-500 border-green-500/30 hover:bg-green-500/10">
+            <Button variant="outline" onClick={() => { setResetActionType('seed'); setIsResetModalOpen(true); }} className="text-green-500 border-green-500/30 hover:bg-green-500/10">
               <RefreshCw className="w-4 h-4 mr-2" /> Seed from OSM
             </Button>
             <Button onClick={startAdd} className="bg-blue-600 hover:bg-blue-700">
@@ -430,7 +443,7 @@ export function AdminPage() {
                       <p>No stations found.</p>
                     </div>
                   ) : (
-                    <div className="divide-y divide-gray-800/50 max-h-[600px] overflow-y-auto">
+                    <div className="divide-y divide-gray-800/50">
                       {filteredStations.map(station => (
                         <div key={station.id} className="p-4 flex items-center justify-between hover:bg-gray-800/10 transition-colors">
                           <div className="min-w-0 pr-4 flex-1">
@@ -485,7 +498,7 @@ export function AdminPage() {
                       <p>No community requests yet.</p>
                     </div>
                  ) : (
-                    <div className="grid gap-4 pr-1" style={{ maxHeight: '600px', overflowY: 'auto' }}>
+                    <div className="grid gap-4 pr-1">
                       {requests.sort((a,b) => b.id - a.id).map(req => (
                         <Card key={req.id} className={`${req.status === 'pending' ? 'border-l-4 border-l-blue-500' : 'opacity-60'}`}>
                           <CardContent className="p-4">
@@ -541,7 +554,7 @@ export function AdminPage() {
           {/* Form Side Panel */}
           <div className="space-y-4">
             {(isEditing || isAdding) ? (
-              <Card className="sticky top-8">
+              <Card className="lg:sticky lg:top-8">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>{isEditing ? 'Edit Station' : 'Add New Station'}</span>
@@ -632,9 +645,13 @@ export function AdminPage() {
               <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
                 <ShieldAlert className="w-10 h-10 text-orange-500" />
               </div>
-              <CardTitle className="text-2xl font-bold">Reset All Data?</CardTitle>
+              <CardTitle className="text-2xl font-bold">
+                {resetActionType === 'reset' ? 'Reset All Data?' : 'Seed from OSM?'}
+              </CardTitle>
               <p className="text-muted-foreground mt-2">
-                This action is irreversible. All fuel statuses, wait times, and queue lengths will be reset to default values across all stations.
+                {resetActionType === 'reset' 
+                  ? 'This action is irreversible. All fuel statuses, wait times, and queue lengths will be reset to default values across all stations.' 
+                  : 'This will fetch fuel station data from OpenStreetMap and update the local database. New stations will be added.'}
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -664,17 +681,17 @@ export function AdminPage() {
                 </Button>
                 <Button 
                   variant="destructive" 
-                  className="flex-1 bg-orange-600 hover:bg-orange-700" 
-                  onClick={handleResetStations}
+                  className={`flex-1 ${resetActionType === 'seed' ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'}`} 
+                  onClick={resetActionType === 'reset' ? handleResetStations : handleSeedFromOSM}
                   disabled={isResetting}
                 >
                   {isResetting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Resetting...
+                      {resetActionType === 'reset' ? 'Resetting...' : 'Seeding...'}
                     </>
                   ) : (
-                    'Confirm Reset'
+                    resetActionType === 'reset' ? 'Confirm Reset' : 'Confirm Seed'
                   )}
                 </Button>
               </div>
