@@ -179,10 +179,14 @@ export async function adminSeedFromOSM(authHeader: string): Promise<{ success: b
 }
 
 // Reset all station data — admin only
-export async function adminResetStations(authHeader: string): Promise<void> {
+export async function adminResetStations(authHeader: string, password?: string): Promise<void> {
   const response = await fetch(`${API_URL}/stations/reset`, {
     method: 'POST',
-    headers: { 'Authorization': authHeader },
+    headers: { 
+      'Authorization': authHeader,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ password }),
   });
 
   if (!response.ok) {
