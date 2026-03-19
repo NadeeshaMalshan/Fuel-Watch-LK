@@ -3,7 +3,7 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { db } from './db.js';
 import { stations, fuelUpdates, stationRequests } from './schema.js';
-import { eq, asc, desc } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -54,54 +54,6 @@ app.get('/api/stations', async (req, res) => {
     res.json(allStations);
   } catch (error) {
     console.error('Error fetching stations:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// GET latest update for a station (last reporter info)
-app.get('/api/stations/:id/latest-update', async (req, res) => {
-  try {
-    const stationId = parseInt(req.params.id);
-    if (isNaN(stationId)) {
-      return res.status(400).json({ error: 'Invalid station ID' });
-    }
-
-    const [latestUpdate] = await db
-      .select()
-      .from(fuelUpdates)
-      .where(eq(fuelUpdates.stationId, stationId))
-      .orderBy(desc(fuelUpdates.timestamp))
-      .limit(1);
-
-    if (!latestUpdate) {
-      return res.status(404).json({ error: 'No updates found' });
-    }
-
-    res.json(latestUpdate);
-  } catch (error) {
-    console.error('Error fetching latest update:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// GET last 5 updates for a station
-app.get('/api/stations/:id/recent-updates', async (req, res) => {
-  try {
-    const stationId = parseInt(req.params.id);
-    if (isNaN(stationId)) {
-      return res.status(400).json({ error: 'Invalid station ID' });
-    }
-
-    const updates = await db
-      .select()
-      .from(fuelUpdates)
-      .where(eq(fuelUpdates.stationId, stationId))
-      .orderBy(desc(fuelUpdates.timestamp))
-      .limit(5);
-
-    res.json(updates);
-  } catch (error) {
-    console.error('Error fetching recent updates:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -223,6 +175,11 @@ app.post('/api/stations/seed', checkAdminAuth, async (req, res) => {
 // Admin - Reset all station data (admin only)
 app.post('/api/stations/reset', checkAdminAuth, async (req, res) => {
   try {
+    const { password } = req.body;
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid password for reset' });
+    }
+
     // Clear all updates
     await db.delete(fuelUpdates);
 
