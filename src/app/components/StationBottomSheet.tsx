@@ -1,31 +1,16 @@
-import { Fuel, CheckCircle2, X, Navigation, Clock, MessageSquare } from 'lucide-react';
+import { Fuel, CheckCircle2, X, Navigation } from 'lucide-react';
 import type { FuelStation } from '../types';
 import { Badge } from './ui/badge';
 import { useTheme } from '../context/ThemeContext';
-import { formatDistanceToNow, format } from 'date-fns';
-
-interface LatestUpdate {
-  id: number;
-  userName: string | null;
-  message: string | null;
-  status: string | null;
-  petrol92: string | null;
-  petrol95: string | null;
-  autoDiesel: string | null;
-  superDiesel: string | null;
-  kerosene: string | null;
-  timestamp: string | null;
-}
 
 interface StationBottomSheetProps {
   station: FuelStation | null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (stationId: string) => void;
-  latestUpdate?: LatestUpdate | null;
 }
 
-export function StationBottomSheet({ station, isOpen, onClose, onConfirm, latestUpdate }: StationBottomSheetProps) {
+export function StationBottomSheet({ station, isOpen, onClose, onConfirm }: StationBottomSheetProps) {
   const { theme, t, localize } = useTheme();
   
   if (!station || !isOpen) return null;
@@ -221,72 +206,6 @@ export function StationBottomSheet({ station, isOpen, onClose, onConfirm, latest
                   {t('station.reportUpdate')}
                 </button>
               </div>
-
-              {/* Last Reported By */}
-              {latestUpdate && (
-                <div className={`mt-6 pt-5 border-t ${theme === 'dark' ? 'border-border' : 'border-gray-100'}`}>
-                  <p className={`text-[10px] font-bold uppercase tracking-[0.2em] mb-3 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Last Reported By
-                  </p>
-                  <div className={`p-4 rounded-3xl border ${theme === 'dark' ? 'bg-card/40 border-border' : 'bg-gray-50 border-gray-100'} space-y-3`}>
-                    {/* Name & Time */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className={`w-8 h-8 rounded-2xl flex items-center justify-center font-bold text-sm ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
-                          {latestUpdate.userName ? latestUpdate.userName.charAt(0).toUpperCase() : '?'}
-                        </div>
-                        <span className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {latestUpdate.userName || 'Anonymous'}
-                        </span>
-                      </div>
-                      {latestUpdate.timestamp && (
-                        <div className={`flex items-center gap-1 text-[10px] ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
-                          <Clock className="w-3 h-3" />
-                          <span title={format(new Date(latestUpdate.timestamp), 'PPpp')}>
-                            {formatDistanceToNow(new Date(latestUpdate.timestamp), { addSuffix: true })}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Reported fuel statuses */}
-                    {(() => {
-                      const fuelLabels: { key: keyof LatestUpdate; label: string }[] = [
-                        { key: 'petrol92', label: 'P92' },
-                        { key: 'petrol95', label: 'P95' },
-                        { key: 'autoDiesel', label: 'Diesel' },
-                        { key: 'superDiesel', label: 'S.Diesel' },
-                        { key: 'kerosene', label: 'Kerosene' },
-                      ];
-                      const reported = fuelLabels.filter(f => latestUpdate[f.key] && latestUpdate[f.key] !== 'not-available');
-                      if (reported.length === 0) return null;
-                      return (
-                        <div className="flex flex-wrap gap-1.5">
-                          {reported.map(({ key, label }) => {
-                            const cfg = getStatusConfig(latestUpdate[key] as string);
-                            return (
-                              <span key={key} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-bold border ${cfg.bgColor} ${cfg.borderColor} ${cfg.textColor}`}>
-                                <Fuel className="w-2.5 h-2.5" />
-                                {label}: {cfg.label}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-
-                    {/* Message */}
-                    {latestUpdate.message && (
-                      <div className={`flex items-start gap-2 pt-2 border-t ${theme === 'dark' ? 'border-border' : 'border-gray-200'}`}>
-                        <MessageSquare className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-xs italic ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                          "{latestUpdate.message}"
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>

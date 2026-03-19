@@ -9,7 +9,11 @@ interface OSMElement {
 }
 
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const envApiBase = import.meta.env.VITE_API_URL;
+const isLocalDev =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const API_URL = isLocalDev ? '/api' : envApiBase || '/api';
 
 function mapDbToFuelStation(dbStation: any): FuelStation {
   return {
@@ -118,7 +122,7 @@ export async function fetchFuelStations(): Promise<FuelStation[]> {
 }
 
 // Fetch stations from OSM and seed the database — admin only
-export async function adminSeedFromOSM(authHeader: string, password?: string): Promise<{ success: boolean; count: number; message: string }> {
+export async function adminSeedFromOSM(authHeader: string): Promise<{ success: boolean; count: number; message: string }> {
   const query = `
     [out:json][timeout:25];
     area["name:en"="Sri Lanka"]->.searchArea;
@@ -167,7 +171,7 @@ export async function adminSeedFromOSM(authHeader: string, password?: string): P
       'Content-Type': 'application/json',
       'Authorization': authHeader,
     },
-    body: JSON.stringify({ stations: osmStations, password }),
+    body: JSON.stringify({ stations: osmStations }),
   });
 
   if (!seedResponse.ok) {
@@ -179,14 +183,10 @@ export async function adminSeedFromOSM(authHeader: string, password?: string): P
 }
 
 // Reset all station data — admin only
-export async function adminResetStations(authHeader: string, password?: string): Promise<void> {
+export async function adminResetStations(authHeader: string): Promise<void> {
   const response = await fetch(`${API_URL}/stations/reset`, {
     method: 'POST',
-    headers: { 
-      'Authorization': authHeader,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ password }),
+    headers: { 'Authorization': authHeader },
   });
 
   if (!response.ok) {

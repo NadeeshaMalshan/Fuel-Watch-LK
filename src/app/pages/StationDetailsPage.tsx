@@ -1,30 +1,16 @@
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { SEO } from '../components/SEO';
-import { ArrowLeft, MapPin, Navigation, Share2, Fuel, TrendingUp, AlertCircle, Send, CheckCircle, X, PlusCircle, User, Clock, MessageSquare } from 'lucide-react';
+import { ArrowLeft, MapPin, Navigation, Share2, Fuel, TrendingUp, AlertCircle, Send, CheckCircle, X, PlusCircle } from 'lucide-react';
 // import { fetchFuelStations } from '../services/osmService';
 import { toast } from 'sonner';
-import { formatDistanceToNow, format } from 'date-fns';
+import { format } from 'date-fns';
 import type { FuelStation, UserUpdate, FuelStatus, SubmitUpdateForm } from '../types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { API_BASE } from '../services/api';
 import { Label } from '../components/ui/label';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
-
-interface RecentUpdate {
-  id: number;
-  stationId: number;
-  userName: string | null;
-  message: string | null;
-  status: string | null;
-  petrol92: string | null;
-  petrol95: string | null;
-  autoDiesel: string | null;
-  superDiesel: string | null;
-  kerosene: string | null;
-  timestamp: string | null;
-}
 
 export function StationDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -33,11 +19,10 @@ export function StationDetailsPage() {
   const { theme, t, localize } = useTheme();
   
   const [station] = useState<FuelStation | null>((location.state?.station as FuelStation) || null);
-  const [stationUpdates] = useState<UserUpdate[]>([]);
+  const [stationUpdates, setStationUpdates] = useState<UserUpdate[]>([]);
   const [isLoading] = useState(!station);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [recentUpdates, setRecentUpdates] = useState<RecentUpdate[]>([]);
 
   const [formData, setFormData] = useState<SubmitUpdateForm>({
     stationId: id || '',
@@ -56,15 +41,6 @@ export function StationDetailsPage() {
   });
   
 
-  // Fetch last 5 updates
-  useEffect(() => {
-    if (!id) return;
-    fetch(`${API_BASE}/stations/${id}/recent-updates`)
-      .then(res => res.ok ? res.json() : [])
-      .then(data => setRecentUpdates(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, [id]);
-
   // Automatically calculate overall status based on individual fuel types
   useEffect(() => {
     const fuelStatuses = [formData.petrol92, formData.petrol95, formData.autoDiesel, formData.superDiesel, formData.kerosene];
@@ -79,6 +55,57 @@ export function StationDetailsPage() {
       setFormData(prev => ({ ...prev, status: newStatus }));
     }
   }, [formData.petrol92, formData.petrol95, formData.autoDiesel, formData.superDiesel, formData.kerosene]);
+
+  // Load last 5 community updates for this station
+  useEffect(() => {
+    if (!id) return;
+
+    const controller = new AbortController();
+
+    const loadUpdates = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/stations/${id}/updates`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          toast.error(`Failed to load recent updates (${response.status})`);
+          return setStationUpdates([]);
+        }
+
+        const updates = await response.json();
+
+        const mapped: UserUpdate[] = (Array.isArray(updates) ? updates : []).map((u: any) => ({
+          id: String(u.id),
+          stationId: String(u.stationId ?? ''),
+          stationName: String(u.stationName ?? ''),
+          userName: String(u.userName ?? ''),
+          timestamp: new Date(u.timestamp),
+          status: (u.status as any) || 'out-of-stock',
+          petrolQueueLength: Number(u.petrolQueueLength ?? 0),
+          petrolWaitingTime: Number(u.petrolWaitingTime ?? 0),
+          dieselQueueLength: Number(u.dieselQueueLength ?? 0),
+          dieselWaitingTime: Number(u.dieselWaitingTime ?? 0),
+          fuelTypes: {
+            petrol92: u.petrol92 ?? undefined,
+            petrol95: u.petrol95 ?? undefined,
+            autoDiesel: u.autoDiesel ?? undefined,
+            superDiesel: u.superDiesel ?? undefined,
+            kerosene: u.kerosene ?? undefined,
+          },
+          message: u.message ?? undefined,
+        }));
+
+        setStationUpdates(mapped);
+      } catch {
+        // Silent fail: UI will just hide updates if backend is unreachable.
+        toast.error('Failed to load recent updates');
+        setStationUpdates([]);
+      }
+    };
+
+    loadUpdates();
+    return () => controller.abort();
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -137,6 +164,49 @@ export function StationDetailsPage() {
   };
 
   const statusConfig = getStatusConfig(station.status);
+
+  const getReportedFuelBadges = (update: UserUpdate): ReactNode => {
+    const fuelItems: Array<{
+      key: string;
+      short: string;
+      value: any;
+    }> = [
+      { key: 'petrol92', short: 'P92', value: update.fuelTypes?.petrol92 },
+      { key: 'petrol95', short: 'P95', value: update.fuelTypes?.petrol95 },
+      { key: 'autoDiesel', short: 'AD', value: update.fuelTypes?.autoDiesel },
+      { key: 'superDiesel', short: 'SD', value: update.fuelTypes?.superDiesel },
+      { key: 'kerosene', short: 'KRS', value: update.fuelTypes?.kerosene },
+    ];
+
+    const reported = fuelItems.filter((i) => i.value && i.value !== 'not-available');
+    if (reported.length === 0) return null;
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        {reported.map((item) => {
+          const cfg = getStatusConfig(String(item.value));
+          return (
+            <span
+              key={item.key}
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest border ${cfg.bgColor} ${cfg.borderColor} ${cfg.textColor}`}
+              title={`${item.short} (${cfg.label})`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  item.value === 'available'
+                    ? 'bg-green-500'
+                    : item.value === 'limited'
+                    ? 'bg-amber-500'
+                    : 'bg-red-500'
+                }`}
+              />
+              {item.short}
+            </span>
+          );
+        })}
+      </div>
+    );
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -522,118 +592,54 @@ export function StationDetailsPage() {
           </div>
         </div>
 
-        {/* Recent Reports */}
-        {recentUpdates.length > 0 && (
-          <div className={`p-6 rounded-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-card/80 border-border' : 'bg-white/80 border-gray-200/50'} border shadow-sm`}>
-            <h2 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4 flex items-center gap-2`}>
-              <User className="w-5 h-5 text-blue-500" />
-              Recent Reports
-              <span className={`ml-auto text-xs font-normal px-2 py-0.5 rounded-full ${theme === 'dark' ? 'bg-card text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
-                Last {recentUpdates.length}
-              </span>
-            </h2>
-
-            <div className="space-y-3">
-              {recentUpdates.map((update, index) => {
-                const fuelLabels: { key: keyof RecentUpdate; label: string }[] = [
-                  { key: 'petrol92', label: 'Petrol 92' },
-                  { key: 'petrol95', label: 'Petrol 95' },
-                  { key: 'autoDiesel', label: 'Auto Diesel' },
-                  { key: 'superDiesel', label: 'Super Diesel' },
-                  { key: 'kerosene', label: 'Kerosene' },
-                ];
-                const reported = fuelLabels.filter(f => update[f.key] && update[f.key] !== 'not-available');
-
-                return (
-                  <div key={update.id} className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-card/40 border-border' : 'bg-gray-50 border-gray-100'} space-y-2.5`}>
-                    {/* Name, badge & time */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0
-                          ${index === 0
-                            ? theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'
-                            : theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
-                          }`}>
-                          {update.userName ? update.userName.charAt(0).toUpperCase() : '?'}
-                        </div>
-                        <div>
-                          <span className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {update.userName || 'Anonymous'}
-                          </span>
-                          {index === 0 && (
-                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wide bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
-                              Latest
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      {update.timestamp && (
-                        <div className={`flex items-center gap-1 text-xs flex-shrink-0 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          <Clock className="w-3 h-3" />
-                          <span title={format(new Date(update.timestamp), 'PPpp')}>
-                            {formatDistanceToNow(new Date(update.timestamp), { addSuffix: true })}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Fuel status badges */}
-                    {reported.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {reported.map(({ key, label }) => {
-                          const cfg = getStatusConfig(update[key] as string);
-                          return (
-                            <span key={key} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${cfg.bgColor} ${cfg.borderColor} ${cfg.textColor}`}>
-                              <Fuel className="w-2.5 h-2.5" />
-                              {label}: {cfg.label}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Message */}
-                    {update.message && (
-                      <div className={`flex items-start gap-2 pt-1 border-t ${theme === 'dark' ? 'border-border' : 'border-gray-200'}`}>
-                        <MessageSquare className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-xs italic ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                          "{update.message}"
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Recent Updates */}
-        {stationUpdates.length > 0 && (
-          <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('station.recentUpdates')}</h2>
+        <div className="p-6 rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200/50">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('station.recentUpdates')}</h2>
+          {stationUpdates.length === 0 ? (
+            <p className="text-sm text-gray-600">No community reports yet.</p>
+          ) : (
             <div className="space-y-3">
               {stationUpdates.map((update: UserUpdate) => (
-                <div key={update.id} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-medium text-gray-900">{update.userName}</p>
+                <div
+                  key={update.id}
+                  className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col gap-2"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-900 truncate">
+                        {update.userName}
+                      </p>
                       <p className="text-xs text-gray-500">
-                        {formatDistanceToNow(update.timestamp, { addSuffix: true })}
+                        {(() => {
+                          const ts = update.timestamp;
+                          if (!(ts instanceof Date)) return '';
+                          if (isNaN(ts.getTime())) return '';
+                          return format(ts, 'PPpp');
+                        })()}
                       </p>
                     </div>
-                    <div className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusConfig(update.status).bgColor} ${getStatusConfig(update.status).borderColor} ${getStatusConfig(update.status).textColor}`}>
+
+                    <div
+                      className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wide border ${getStatusConfig(update.status).bgColor} ${getStatusConfig(update.status).borderColor} ${getStatusConfig(update.status).textColor}`}
+                    >
                       {getStatusConfig(update.status).label}
                     </div>
                   </div>
-                  {update.message && (
-                    <p className="text-sm text-gray-700 italic">"{update.message}"</p>
-                  )}
+
+                  {(() => {
+                    return getReportedFuelBadges(update);
+                  })()}
+
+                  {update.message ? (
+                    <p className="text-sm text-gray-700 italic leading-snug">
+                      "{update.message}"
+                    </p>
+                  ) : null}
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </div>
     </>

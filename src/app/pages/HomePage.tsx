@@ -10,20 +10,6 @@ import { fetchFuelStations } from '../services/osmService';
 import { toast, Toaster } from 'sonner';
 import { List, TrendingUp, Loader2, Search, Locate, Clock, Settings, Users, MapPin, Home, AlertCircle, Plus, MessageSquare, BookOpen } from 'lucide-react';
 import type { MapBounds, SearchSuggestion } from '../types';
-import { API_BASE } from '../services/api';
-
-interface LatestUpdate {
-  id: number;
-  userName: string | null;
-  message: string | null;
-  status: string | null;
-  petrol92: string | null;
-  petrol95: string | null;
-  autoDiesel: string | null;
-  superDiesel: string | null;
-  kerosene: string | null;
-  timestamp: string | null;
-}
 
 type FuelType = 'all' | 'petrol92' | 'petrol95' | 'autoDiesel' | 'superDiesel' | 'kerosene';
 type SortBy = 'status' | 'distance' | 'queue';
@@ -46,7 +32,6 @@ export function HomePage() {
   const [currentMapZoom, setCurrentMapZoom] = useState(8);
   const [selectedStation, setSelectedStation] = useState<FuelStation | null>(null);
   const [isStationSheetOpen, setIsStationSheetOpen] = useState(false);
-  const [sheetLatestUpdate, setSheetLatestUpdate] = useState<LatestUpdate | null>(null);
 
   const isMobile = useMemo(() => window.matchMedia?.('(max-width: 1023px)')?.matches ?? true, []);
 
@@ -287,11 +272,6 @@ export function HomePage() {
   const handleStationSelect = useCallback((station: FuelStation) => {
     setSelectedStation(station);
     setIsStationSheetOpen(true);
-    setSheetLatestUpdate(null);
-    fetch(`${API_BASE}/stations/${station.id}/latest-update`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => setSheetLatestUpdate(data))
-      .catch(() => {});
   }, []);
 
   const handleSheetConfirm = useCallback((stationId: string) => {
@@ -683,7 +663,6 @@ export function HomePage() {
         isOpen={isStationSheetOpen}
         onClose={() => setIsStationSheetOpen(false)}
         onConfirm={handleSheetConfirm}
-        latestUpdate={sheetLatestUpdate}
       />
 
       </>

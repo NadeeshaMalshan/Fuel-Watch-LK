@@ -1,4 +1,9 @@
 // Base URL for all API calls.
-// Default: Railway API via .env.development / .env.production.
-// Local backend: run `npm run server`, then use .env.development.local with VITE_API_URL empty or unset /api.
-export const API_BASE = import.meta.env.VITE_API_URL || '/api';
+// In dev, you may have VITE_API_URL pointing to hosted backend.
+// When running on localhost, we always want to use the local Vite proxy (/api -> localhost:3000).
+const envApiBase = import.meta.env.VITE_API_URL;
+const isLocalDev =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+export const API_BASE = isLocalDev ? '/api' : envApiBase || '/api';

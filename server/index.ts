@@ -3,7 +3,7 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { db } from './db.js';
 import { stations, fuelUpdates, stationRequests } from './schema.js';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, desc } from 'drizzle-orm';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -126,14 +126,85 @@ app.post('/api/stations/:id/updates', async (req, res) => {
   }
 });
 
+// Public - Get latest fuel updates for a station (last 5 reports)
+app.get('/api/stations/:id/updates', async (req, res) => {
+  try {
+    const stationId = parseInt(req.params.id);
+    if (isNaN(stationId)) {
+      return res.status(400).json({ error: 'Invalid station ID' });
+    }
+
+    // Pull exactly what we need from `fuel_updates`
+    const updates = await db
+      .select({
+        id: fuelUpdates.id,
+        stationId: fuelUpdates.stationId,
+        userName: fuelUpdates.userName,
+        message: fuelUpdates.message,
+        status: fuelUpdates.status,
+        petrol92: fuelUpdates.petrol92,
+        petrol95: fuelUpdates.petrol95,
+        autoDiesel: fuelUpdates.autoDiesel,
+        superDiesel: fuelUpdates.superDiesel,
+        kerosene: fuelUpdates.kerosene,
+        petrolQueueLength: fuelUpdates.petrolQueueLength,
+        petrolWaitingTime: fuelUpdates.petrolWaitingTime,
+        dieselQueueLength: fuelUpdates.dieselQueueLength,
+        dieselWaitingTime: fuelUpdates.dieselWaitingTime,
+        timestamp: fuelUpdates.timestamp,
+      })
+      .from(fuelUpdates)
+      .where(eq(fuelUpdates.stationId, stationId))
+      .orderBy(desc(fuelUpdates.timestamp))
+      .limit(5);
+
+    res.json(updates);
+  } catch (error) {
+    console.error('Error fetching station updates:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Debug - latest fuel updates (ignores station param)
+app.get('/api/debug/fuel-updates/latest', async (req, res) => {
+  try {
+    const updates = await db
+      .select({
+        id: fuelUpdates.id,
+        stationId: fuelUpdates.stationId,
+        userName: fuelUpdates.userName,
+        message: fuelUpdates.message,
+        status: fuelUpdates.status,
+        petrol92: fuelUpdates.petrol92,
+        petrol95: fuelUpdates.petrol95,
+        autoDiesel: fuelUpdates.autoDiesel,
+        superDiesel: fuelUpdates.superDiesel,
+        kerosene: fuelUpdates.kerosene,
+        petrolQueueLength: fuelUpdates.petrolQueueLength,
+        petrolWaitingTime: fuelUpdates.petrolWaitingTime,
+        dieselQueueLength: fuelUpdates.dieselQueueLength,
+        dieselWaitingTime: fuelUpdates.dieselWaitingTime,
+        timestamp: fuelUpdates.timestamp,
+        // Join for readability (helps detect stationId mismatch)
+        stationName: stations.name,
+        stationOsmId: stations.osmId,
+      })
+      .from(fuelUpdates)
+      .leftJoin(stations, eq(fuelUpdates.stationId, stations.id))
+      .orderBy(desc(fuelUpdates.timestamp))
+      .limit(10);
+
+    res.json(updates);
+  } catch (error) {
+    console.error('Error fetching debug fuel updates:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Admin - Seed stations from OSM data (admin only)
 app.post('/api/stations/seed', checkAdminAuth, async (req, res) => {
   try {
-    const { password, stations: newStations } = req.body;
-    if (password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ error: 'Invalid password for seeding' });
-    }
-    
+    const { stations: newStations } = req.body;
     if (!newStations || !Array.isArray(newStations)) {
       return res.status(400).json({ error: 'Invalid payload' });
     }
@@ -179,11 +250,6 @@ app.post('/api/stations/seed', checkAdminAuth, async (req, res) => {
 // Admin - Reset all station data (admin only)
 app.post('/api/stations/reset', checkAdminAuth, async (req, res) => {
   try {
-    const { password } = req.body;
-    if (password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ error: 'Invalid password for reset' });
-    }
-
     // Clear all updates
     await db.delete(fuelUpdates);
 
