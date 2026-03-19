@@ -118,7 +118,7 @@ export async function fetchFuelStations(): Promise<FuelStation[]> {
 }
 
 // Fetch stations from OSM and seed the database — admin only
-export async function adminSeedFromOSM(authHeader: string): Promise<{ success: boolean; count: number; message: string }> {
+export async function adminSeedFromOSM(authHeader: string, password?: string): Promise<{ success: boolean; count: number; message: string }> {
   const query = `
     [out:json][timeout:25];
     area["name:en"="Sri Lanka"]->.searchArea;
@@ -167,7 +167,7 @@ export async function adminSeedFromOSM(authHeader: string): Promise<{ success: b
       'Content-Type': 'application/json',
       'Authorization': authHeader,
     },
-    body: JSON.stringify({ stations: osmStations }),
+    body: JSON.stringify({ stations: osmStations, password }),
   });
 
   if (!seedResponse.ok) {
