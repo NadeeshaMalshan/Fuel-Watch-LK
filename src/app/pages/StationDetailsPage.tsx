@@ -335,7 +335,16 @@ export function StationDetailsPage() {
               {t('station.getDirections')}
             </button>
             <button
-              onClick={() => setIsUpdating(!isUpdating)}
+              onClick={() => {
+                if (!isUpdating) {
+                  const trilingualMsg = 
+                    "Please update true details only. One wrong detail can affect everyone because all data is from the community.\n\n" +
+                    "කරුණාකර නිවැරදි තොරතුරු පමණක් යාවත්කාලීන කරන්න. එක් වැරදි විස්තරයක් හෝ සැමට බලපෑ හැකිය, මන්ද සියලුම දත්ත ප්රජාවෙන් ලබාගත් ඒවා බැවිනි.\n\n" +
+                    "தயவுசெய்து துல்லியமான விவரங்களை மட்டுமே பதிவேற்றவும். அனைத்து தரவுகளும் சமூகத்திலிருந்து பெறப்படுவதால், ஒரு தவறான விவரம் கூட அனைவரையும் பாதிக்கக்கூடும்.";
+                  alert(trilingualMsg);
+                }
+                setIsUpdating(!isUpdating);
+              }}
               className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 border-2 ${isUpdating ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-blue-500 text-blue-600 hover:bg-blue-50'}`}
             >
               {isUpdating ? <X className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
