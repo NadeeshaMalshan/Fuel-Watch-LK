@@ -7,6 +7,7 @@ import { AdminPage } from "./pages/AdminPage";
 import { FeedbackPage } from "./pages/FeedbackPage";
 import { AboutPage } from "./pages/AboutPage";
 import { GuidePage } from "./pages/GuidePage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "feedback", Component: FeedbackPage },
       { path: "about", Component: AboutPage },
       { path: "guide", Component: GuidePage },
+      { path: "*", Component: NotFoundPage },
     ],
   },
 ]);
