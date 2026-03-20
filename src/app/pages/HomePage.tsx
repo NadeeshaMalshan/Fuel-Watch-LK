@@ -228,7 +228,7 @@ export function HomePage() {
     if (suggestion.type === 'station') {
       setCurrentMapZoom(17);
       if (suggestion.station) {
-        handleStationClick(suggestion.station);
+        handleStationSelect(suggestion.station);
       }
     } else {
       setCurrentMapZoom(14);
