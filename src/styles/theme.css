@@ -273,11 +273,11 @@
   .leaflet-marker-icon.custom-marker {
     background: transparent !important;
     border: none !important;
-    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
   }
 
   html.dark .leaflet-marker-icon.custom-marker {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.28));
   }
 
   /* Mobile: Leaflet zoom (+/-) — lower on screen (above bottom nav, easier to tap) */
