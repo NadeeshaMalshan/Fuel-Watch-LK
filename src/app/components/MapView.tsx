@@ -81,8 +81,8 @@ function formatClusterCount(n: number): { label: string; title: string } {
   return { label: `${Math.round(n / 1000)}k`, title };
 }
 
-/** Minimal pump glyph (white on status-colored cluster disc). */
-const CLUSTER_PUMP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22V6h12v16H3z"/><path d="M5 8h8"/><path d="M15 11h2a2 2 0 0 1 2 2v2.5"/><path d="M19 15.5V11a2 2 0 0 0-2-2h-2"/><path d="M17 18h.01"/></svg>`;
+/** Lucide `fuel` icon (white on status-colored cluster disc). */
+const CLUSTER_FUEL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg>`;
 
 /** Shared circular cluster bubble (markercluster + district aggregates). */
 function buildClusterDiscMarkup(
@@ -105,7 +105,7 @@ function buildClusterDiscMarkup(
           ? '0 2px 12px rgba(213, 0, 0, 0.4)'
           : '0 2px 10px rgba(0,0,0,0.28)';
   const countSize = label.length > 3 ? 10 : n >= 100 ? 11 : 12;
-  const html = `<div title="${escapeHtmlAttr(titleAttr)}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:${size}px;height:${size}px;background:${bg};color:#fff;font-weight:700;border-radius:50%;border:2px solid ${border};box-shadow:${shadow};text-shadow:0 1px 2px rgba(0,0,0,0.35);cursor:pointer;">${CLUSTER_PUMP_SVG}<span style="font-size:${countSize}px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;opacity:0.95">${label}</span></div>`;
+  const html = `<div title="${escapeHtmlAttr(titleAttr)}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:${size}px;height:${size}px;background:${bg};color:#fff;font-weight:700;border-radius:50%;border:2px solid ${border};box-shadow:${shadow};text-shadow:0 1px 2px rgba(0,0,0,0.35);cursor:pointer;">${CLUSTER_FUEL_SVG}<span style="font-size:${countSize}px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;opacity:0.95">${label}</span></div>`;
   return { html, size };
 }
 
@@ -204,7 +204,8 @@ export function MapView({
       mapInstanceRef.current = L.map(mapRef.current, {
         maxBounds: sriLankaBounds,
         maxBoundsViscosity: 1.0,
-        minZoom: 7,
+        minZoom: 6,
+        zoomSnap: 0.5,
       }).setView(center, zoom);
 
       const osmTiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';

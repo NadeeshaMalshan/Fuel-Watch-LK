@@ -28,10 +28,10 @@ type NominatimSearchHit = {
   display_name: string;
 };
 
-/** Slightly more zoomed out on narrow viewports so the island fits the map panel better. */
+/** Default zoom (fractional); mobile vs desktop. */
 function initialMapZoom(): number {
-  if (typeof window === 'undefined') return 8;
-  return window.matchMedia('(max-width: 1023px)').matches ? 7 : 8;
+  if (typeof window === 'undefined') return 7.5;
+  return window.matchMedia('(max-width: 1023px)').matches ? 6.5 : 7.5;
 }
 
 export function HomePage() {
