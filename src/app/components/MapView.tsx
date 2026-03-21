@@ -452,32 +452,32 @@ export function MapView({
       return;
     }
 
-    // Classic teardrop pin + large white “hole” in the head (flat style, status-coloured body)
+    // Lightweight pin: smaller footprint, all-SVG (no HTML overlay / heavy glow)
     const createCustomIcon = (status: string) => {
       const color = getMarkerColor(status);
-      const stroke =
-        theme === 'dark' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.98)';
+      const rim =
+        theme === 'dark' ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.92)';
 
       return L.divIcon({
         html: `
-          <div style="width:28px;height:35px;pointer-events:auto;">
-            <svg width="28" height="35" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <div style="width:26px;height:32px;pointer-events:auto;">
+            <svg width="26" height="32" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path
                 d="M16 0C7.163 0 0 7.163 0 16C0 28 16 40 16 40C16 40 32 28 32 16C32 7.163 24.837 0 16 0Z"
                 fill="${color}"
-                stroke="${stroke}"
-                stroke-width="1.15"
+                stroke="${rim}"
+                stroke-width="1"
                 stroke-linejoin="round"
               />
-              <circle cx="16" cy="14.5" r="7.75" fill="white" />
-              <circle cx="16" cy="14.5" r="3.85" fill="${color}" />
+              <circle cx="16" cy="14.25" r="6.25" fill="white" />
+              <circle cx="16" cy="14.25" r="3.1" fill="${color}" />
             </svg>
           </div>
         `,
         className: 'custom-marker',
-        iconSize: [28, 35],
-        iconAnchor: [14, 35],
-        popupAnchor: [0, -34],
+        iconSize: [26, 32],
+        iconAnchor: [13, 32],
+        popupAnchor: [0, -30],
       });
     };
 

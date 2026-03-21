@@ -28,6 +28,12 @@ type NominatimSearchHit = {
   display_name: string;
 };
 
+/** Slightly more zoomed out on narrow viewports so the island fits the map panel better. */
+function initialMapZoom(): number {
+  if (typeof window === 'undefined') return 8;
+  return window.matchMedia('(max-width: 1023px)').matches ? 7 : 8;
+}
+
 export function HomePage() {
   const navigate = useNavigate();
   const { theme, t, localize, language } = useTheme();
@@ -43,11 +49,11 @@ export function HomePage() {
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([7.8731, 80.7718]);
-  const [currentMapZoom, setCurrentMapZoom] = useState(8);
+  const [currentMapZoom, setCurrentMapZoom] = useState(initialMapZoom);
   const [selectedStation, setSelectedStation] = useState<FuelStation | null>(null);
   const [isStationSheetOpen, setIsStationSheetOpen] = useState(false);
   /** Last zoom from the map (moveend); not synced into center/zoom props to avoid fighting user pan. */
-  const [viewportZoom, setViewportZoom] = useState(8);
+  const [viewportZoom, setViewportZoom] = useState(initialMapZoom);
   const [districtClusterMode, setDistrictClusterMode] = useState(true);
 
   const reverseGeoDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
