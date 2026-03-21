@@ -34,7 +34,6 @@ export async function showWebNotification(
     ...options,
     icon: options?.icon ?? iconUrl,
     badge: options?.badge ?? iconUrl,
-    vibrate: options?.vibrate ?? [180, 80, 180],
   };
 
   if ('serviceWorker' in navigator) {
