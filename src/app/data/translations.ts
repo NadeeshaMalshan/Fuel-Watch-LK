@@ -121,6 +121,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.out': 'Out',
     'submit.notAvailable': 'N/A',
 
+    // PWA install (mobile, unobtrusive banner)
+    'pwa.a11yRegion': 'Install app',
+    'pwa.title': 'Install Fuel Alert',
+    'pwa.titleIos': 'Add to Home Screen',
+    'pwa.subtitle': 'Open faster from your home screen — works offline after the first visit.',
+    'pwa.iosHint':
+      'Tap Share, then “Add to Home Screen” for quick access like a normal app.',
+    'pwa.install': 'Install',
+    'pwa.later': 'Not now',
+    'pwa.close': 'Dismiss',
+
     // Locations
     'location.ratnapura': 'Ratnapura',
     'location.colombo': 'Colombo',
@@ -248,6 +259,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.out': 'ඉවරයි',
     'submit.notAvailable': 'නැත',
 
+    'pwa.a11yRegion': 'යෙදුම ස්ථාපනය',
+    'pwa.title': 'Fuel Alert ස්ථාපනය කරන්න',
+    'pwa.titleIos': 'මුල් තිරයට එකතු කරන්න',
+    'pwa.subtitle':
+      'මුල් තිරයෙන් ඉක්මනින් විවෘත කරන්න — පළමු වර ගිය පසු ජාලය නැතුවත් ක්‍රියා කරයි.',
+    'pwa.iosHint':
+      'Share ඔබා “Add to Home Screen” තෝරන්න — සාමාන්‍ය යෙදුමක් වගේ පහසුවෙන් යන්න පුළුවන්.',
+    'pwa.install': 'ස්ථාපනය',
+    'pwa.later': 'අවශ්‍ය නැහැ',
+    'pwa.close': 'වසන්න',
+
     // Locations
     'location.ratnapura': 'රත්නපුර',
     'location.colombo': 'කොළඹ',
@@ -374,6 +396,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.errorFields': 'தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்',
     'submit.out': 'இல்லை',
     'submit.notAvailable': 'இல்லை',
+
+    'pwa.a11yRegion': 'பயன்பாட்டை நிறுவுக',
+    'pwa.title': 'Fuel Alert ஐ நிறுவுக',
+    'pwa.titleIos': 'முகப்புத் திரையில் சேர்க்க',
+    'pwa.subtitle':
+      'முகப்புத் திரையிலிருந்து விரைவாகத் திறக்கலாம் — முதல் முறைக்குப் பிறகு இணையம் இல்லாமலும் வேலை செய்யும்.',
+    'pwa.iosHint':
+      'Share ஐத் தட்டி “Add to Home Screen” ஐத் தேர்ந்தெடுக்கவும் — சாதாரண செயலியைப் போல எளிதாகப் பயன்படுத்தலாம்.',
+    'pwa.install': 'நிறுவுக',
+    'pwa.later': 'இப்போது வேண்டாம்',
+    'pwa.close': 'மூடுக',
 
     // Locations
     'location.ratnapura': 'இரத்தினபுரி',
