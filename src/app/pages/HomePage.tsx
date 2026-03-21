@@ -48,6 +48,7 @@ export function HomePage() {
   const [isStationSheetOpen, setIsStationSheetOpen] = useState(false);
   /** Last zoom from the map (moveend); not synced into center/zoom props to avoid fighting user pan. */
   const [viewportZoom, setViewportZoom] = useState(8);
+  const [districtClusterMode, setDistrictClusterMode] = useState(true);
 
   const reverseGeoDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reverseGeoAbortRef = useRef<AbortController | null>(null);
@@ -56,6 +57,10 @@ export function HomePage() {
   localizeRef.current = localize;
 
   const isMobile = useMemo(() => window.matchMedia?.('(max-width: 1023px)')?.matches ?? true, []);
+
+  const exitDistrictClusterMode = useCallback(() => {
+    setDistrictClusterMode(false);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -716,6 +721,8 @@ export function HomePage() {
             onBoundsChange={handleBoundsChange}
             userLocation={userLocation}
             variant={isMobile ? 'select' : 'popup'}
+            clusterByDistrict={districtClusterMode}
+            onDistrictClusterExit={exitDistrictClusterMode}
             className="w-full h-full"
           />
 

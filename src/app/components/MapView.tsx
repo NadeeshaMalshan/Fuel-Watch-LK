@@ -1,8 +1,113 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster';
 import type { FuelStation, MapBounds } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { districtLabel, getDistrictById } from '../data/sriLankaDistricts';
+import { groupStationsByDistrict, stationCentroid } from '../utils/districtCluster';
+
+type ClusterFuelStatus = 'available' | 'limited' | 'out-of-stock' | 'not-available';
+
+const MARKER_EFFECTIVE_STATUS = '_fuelEffectiveStatus' as const;
+
+function readMarkerEffectiveStatus(m: L.Marker): ClusterFuelStatus {
+  const v = (m as L.Marker & { [MARKER_EFFECTIVE_STATUS]?: ClusterFuelStatus })[
+    MARKER_EFFECTIVE_STATUS
+  ];
+  if (v === 'available' || v === 'limited' || v === 'out-of-stock' || v === 'not-available') {
+    return v;
+  }
+  return 'not-available';
+}
+
+/** Majority status inside a cluster; ties break in favour of earlier key (available first). */
+function dominantClusterStatus(markers: L.Marker[]): ClusterFuelStatus {
+  const counts: Record<ClusterFuelStatus, number> = {
+    available: 0,
+    limited: 0,
+    'out-of-stock': 0,
+    'not-available': 0,
+  };
+  for (const m of markers) {
+    counts[readMarkerEffectiveStatus(m)] += 1;
+  }
+  const priority: ClusterFuelStatus[] = [
+    'available',
+    'limited',
+    'out-of-stock',
+    'not-available',
+  ];
+  return priority.reduce((best, k) => (counts[k] > counts[best] ? k : best), 'not-available');
+}
+
+function dominantStationListStatus(
+  stations: FuelStation[],
+  getEffective: (s: FuelStation) => ClusterFuelStatus,
+): ClusterFuelStatus {
+  const counts: Record<ClusterFuelStatus, number> = {
+    available: 0,
+    limited: 0,
+    'out-of-stock': 0,
+    'not-available': 0,
+  };
+  for (const s of stations) {
+    counts[getEffective(s)] += 1;
+  }
+  const priority: ClusterFuelStatus[] = [
+    'available',
+    'limited',
+    'out-of-stock',
+    'not-available',
+  ];
+  return priority.reduce((best, k) => (counts[k] > counts[best] ? k : best), 'not-available');
+}
+
+function escapeHtmlAttr(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+/** Shorter map labels; exact count on hover via tooltip title. */
+function formatClusterCount(n: number): { label: string; title: string } {
+  const title = `${n} ${n === 1 ? 'station' : 'stations'}`;
+  if (n < 1000) return { label: String(n), title };
+  if (n < 10000) {
+    const k = n / 1000;
+    const rounded = Math.round(k * 10) / 10;
+    const label = (Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)) + 'k';
+    return { label, title };
+  }
+  return { label: `${Math.round(n / 1000)}k`, title };
+}
+
+/** Minimal pump glyph (white on status-colored cluster disc). */
+const CLUSTER_PUMP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22V6h12v16H3z"/><path d="M5 8h8"/><path d="M15 11h2a2 2 0 0 1 2 2v2.5"/><path d="M19 15.5V11a2 2 0 0 0-2-2h-2"/><path d="M17 18h.01"/></svg>`;
+
+/** Shared circular cluster bubble (markercluster + district aggregates). */
+function buildClusterDiscMarkup(
+  n: number,
+  dominant: ClusterFuelStatus,
+  theme: 'light' | 'dark',
+  bg: string,
+  titleAttr: string,
+): { html: string; size: number } {
+  const { label } = formatClusterCount(n);
+  const size = n >= 500 ? 52 : n >= 100 ? 48 : n >= 10 ? 44 : 40;
+  const border =
+    theme === 'dark' ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.92)';
+  const shadow =
+    dominant === 'available'
+      ? '0 2px 12px rgba(0, 200, 83, 0.45)'
+      : dominant === 'limited'
+        ? '0 2px 12px rgba(255, 171, 0, 0.4)'
+        : dominant === 'out-of-stock'
+          ? '0 2px 12px rgba(213, 0, 0, 0.4)'
+          : '0 2px 10px rgba(0,0,0,0.28)';
+  const countSize = label.length > 3 ? 10 : n >= 100 ? 11 : 12;
+  const html = `<div title="${escapeHtmlAttr(titleAttr)}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:${size}px;height:${size}px;background:${bg};color:#fff;font-weight:700;border-radius:50%;border:2px solid ${border};box-shadow:${shadow};text-shadow:0 1px 2px rgba(0,0,0,0.35);cursor:pointer;">${CLUSTER_PUMP_SVG}<span style="font-size:${countSize}px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;opacity:0.95">${label}</span></div>`;
+  return { html, size };
+}
 
 interface MapViewProps {
   stations: FuelStation[];
@@ -16,6 +121,9 @@ interface MapViewProps {
   selectedLocation?: [number, number] | null;
   variant?: 'popup' | 'select';
   className?: string;
+  /** One marker per district (nearest reference point); click zooms in and exits this mode. */
+  clusterByDistrict?: boolean;
+  onDistrictClusterExit?: () => void;
 }
 
 export function MapView({ 
@@ -30,14 +138,17 @@ export function MapView({
   selectedLocation,
   variant = 'popup',
   className,
+  clusterByDistrict = false,
+  onDistrictClusterExit,
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
-  const markersLayerRef = useRef<L.LayerGroup | null>(null);
+  const clusterRef = useRef<L.MarkerClusterGroup | null>(null);
+  const districtGroupRef = useRef<L.LayerGroup | null>(null);
   const userMarkerRef = useRef<L.CircleMarker | null>(null);
   const selectionMarkerRef = useRef<L.Marker | null>(null);
-  const { theme } = useTheme();
+  const { theme, language, t } = useTheme();
   const lastCenterPropRef = useRef<string>("");
   const onBoundsChangeRef = useRef(onBoundsChange);
   const onStationClickRef = useRef(onStationClick);
@@ -45,6 +156,17 @@ export function MapView({
   const onLocationSelectRef = useRef(onLocationSelect);
   const stationsRef = useRef(stations);
   const variantRef = useRef(variant);
+  const tRef = useRef(t);
+  const onDistrictClusterExitRef = useRef(onDistrictClusterExit);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
+  useEffect(() => {
+    onDistrictClusterExitRef.current = onDistrictClusterExit;
+  }, [onDistrictClusterExit]);
+
   useEffect(() => {
     onLocationSelectRef.current = onLocationSelect;
   }, [onLocationSelect]);
@@ -252,9 +374,13 @@ export function MapView({
   useEffect(() => {
     if (!mapInstanceRef.current) return;
 
-    if (markersLayerRef.current) {
-      mapInstanceRef.current.removeLayer(markersLayerRef.current);
-      markersLayerRef.current = null;
+    if (clusterRef.current) {
+      mapInstanceRef.current.removeLayer(clusterRef.current);
+      clusterRef.current = null;
+    }
+    if (districtGroupRef.current) {
+      mapInstanceRef.current.removeLayer(districtGroupRef.current);
+      districtGroupRef.current = null;
     }
 
     if (stations.length === 0) return;
@@ -280,6 +406,51 @@ export function MapView({
       const hasAnyFuelData = Object.values(station.fuelTypes).some((v) => v !== undefined);
       return hasAnyFuelData ? station.status : 'not-available';
     };
+
+    if (clusterByDistrict) {
+      const grouped = groupStationsByDistrict(stations);
+      const layer = L.layerGroup();
+
+      for (const [districtId, list] of grouped) {
+        if (list.length === 0) continue;
+        const meta = getDistrictById(districtId);
+        if (!meta) continue;
+
+        const label = districtLabel(meta, language);
+        const center = stationCentroid(list);
+        const dominant = dominantStationListStatus(list, getEffectiveStatus);
+        const bg = getMarkerColor(dominant);
+        const n = list.length;
+        const countTitle = formatClusterCount(n).title;
+        const titleAttr = `${label} — ${countTitle}`;
+        const tip = `${titleAttr}\n${tRef.current('map.districtZoomHint')}`;
+        const { html, size } = buildClusterDiscMarkup(n, dominant, theme, bg, titleAttr);
+        const icon = L.divIcon({
+          className: 'fuel-marker-cluster',
+          html,
+          iconSize: L.point(size, size),
+          iconAnchor: L.point(size / 2, size / 2),
+        });
+
+        const marker = L.marker(center, { icon });
+        marker.bindTooltip(tip, { direction: 'top', opacity: 0.95 });
+        marker.on('click', (e: L.LeafletMouseEvent) => {
+          L.DomEvent.stopPropagation(e);
+          const bounds = L.latLngBounds(list.map((s) => s.coordinates));
+          mapInstanceRef.current?.fitBounds(bounds, {
+            padding: [40, 40],
+            maxZoom: 13,
+            animate: true,
+          });
+          onDistrictClusterExitRef.current?.();
+        });
+        layer.addLayer(marker);
+      }
+
+      layer.addTo(mapInstanceRef.current);
+      districtGroupRef.current = layer;
+      return;
+    }
 
     // Classic teardrop pin + large white “hole” in the head (flat style, status-coloured body)
     const createCustomIcon = (status: string) => {
@@ -310,7 +481,31 @@ export function MapView({
       });
     };
 
-    const layer = L.layerGroup();
+    const cluster = L.markerClusterGroup({
+      disableClusteringAtZoom: 16,
+      maxClusterRadius: (z: number) => (z <= 9 ? 72 : z <= 11 ? 64 : 52),
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      removeOutsideVisibleBounds: true,
+      chunkedLoading: stations.length > 120,
+      chunkInterval: 200,
+      chunkDelay: 50,
+      iconCreateFunction: (clusterGroup) => {
+        const leaves = clusterGroup.getAllChildMarkers();
+        const dominant = dominantClusterStatus(leaves);
+        const n = clusterGroup.getChildCount();
+        const { title } = formatClusterCount(n);
+        const bg = getMarkerColor(dominant);
+        const { html, size } = buildClusterDiscMarkup(n, dominant, theme, bg, title);
+        return L.divIcon({
+          html,
+          className: 'fuel-marker-cluster',
+          iconSize: L.point(size, size),
+          iconAnchor: L.point(size / 2, size / 2),
+        });
+      },
+    });
 
     const newMarkers: L.Marker[] = [];
 
@@ -319,6 +514,8 @@ export function MapView({
       const marker = L.marker(station.coordinates, {
         icon: createCustomIcon(effectiveStatus),
       });
+      const tagged = marker as L.Marker & Partial<Record<typeof MARKER_EFFECTIVE_STATUS, ClusterFuelStatus>>;
+      tagged[MARKER_EFFECTIVE_STATUS] = effectiveStatus as ClusterFuelStatus;
 
       if (variant === 'select') {
         marker.on('click', (e: L.LeafletMouseEvent) => {
@@ -461,10 +658,10 @@ export function MapView({
       newMarkers.push(marker);
     });
 
-    for (const m of newMarkers) layer.addLayer(m);
-    layer.addTo(mapInstanceRef.current);
-    markersLayerRef.current = layer;
-  }, [stations, theme, variant]);
+    cluster.addLayers(newMarkers);
+    cluster.addTo(mapInstanceRef.current);
+    clusterRef.current = cluster;
+  }, [stations, theme, variant, clusterByDistrict, language]);
 
   return <div ref={mapRef} className={className ?? "w-full h-full overflow-hidden"} />;
 }
