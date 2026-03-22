@@ -120,9 +120,9 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // PWA install (mobile, unobtrusive banner)
     'pwa.a11yRegion': 'Install app',
-    'pwa.title': 'Install Fuel Alert',
+    'pwa.title': 'Would you like to install Fuel Alert app?',
     'pwa.titleIos': 'Add to Home Screen',
-    'pwa.subtitle': 'Open faster from your home screen — works offline after the first visit.',
+    'pwa.subtitle': '',
     'pwa.iosHint':
       'Tap Share, then “Add to Home Screen” for quick access like a normal app.',
     'pwa.androidMenuHint':
@@ -259,10 +259,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.notAvailable': 'නැත',
 
     'pwa.a11yRegion': 'යෙදුම ස්ථාපනය',
-    'pwa.title': 'Fuel Alert ස්ථාපනය කරන්න',
+    'pwa.title': 'ඔබට Fuel Alert යෙදුම ස්ථාපනය කිරීමට අවශ්‍යද?',
     'pwa.titleIos': 'මුල් තිරයට එකතු කරන්න',
-    'pwa.subtitle':
-      'මුල් තිරයෙන් ඉක්මනින් විවෘත කරන්න — පළමු වර ගිය පසු ජාලය නැතුවත් ක්‍රියා කරයි.',
+    'pwa.subtitle': '',
     'pwa.iosHint':
       'Share ඔබා “Add to Home Screen” තෝරන්න — සාමාන්‍ය යෙදුමක් වගේ පහසුවෙන් යන්න පුළුවන්.',
     'pwa.androidMenuHint':
@@ -399,14 +398,13 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.notAvailable': 'இல்லை',
 
     'pwa.a11yRegion': 'பயன்பாட்டை நிறுவுக',
-    'pwa.title': 'Fuel Alert ஐ நிறுவுக',
+    'pwa.title': 'Fuel Alert செயலியை நிறுவ விரும்புகிறீர்களா?',
     'pwa.titleIos': 'முகப்புத் திரையில் சேர்க்க',
-    'pwa.subtitle':
-      'முகப்புத் திரையிலிருந்து விரைவாகத் திறக்கலாம் — முதல் முறைக்குப் பிறகு இணையம் இல்லாமலும் வேலை செய்யும்.',
+    'pwa.subtitle': '',
     'pwa.iosHint':
       'Share ஐத் தட்டி “Add to Home Screen” ஐத் தேர்ந்தெடுக்கவும் — சாதாரண செயலியைப் போல எளிதாகப் பயன்படுத்தலாம்.',
     'pwa.androidMenuHint':
-      'விரும்புகிறீர்களா Fuel Alert app ஐ நிறுவ விரும்புகிறீர்களா?',
+      'Fuel Alert app ஐ நிறுவ விரும்புகிறீர்களா?',
     'pwa.install': 'நிறுவுக',
     'pwa.later': 'இப்போது வேண்டாம்',
     'pwa.close': 'மூடுக',
