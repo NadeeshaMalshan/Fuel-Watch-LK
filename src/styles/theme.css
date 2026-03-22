@@ -280,6 +280,12 @@
     filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.28));
   }
 
+  /* Markercluster / district divIcons — avoid Leaflet default tile background hiding pins */
+  .leaflet-marker-icon.fuel-marker-cluster {
+    background: transparent !important;
+    border: none !important;
+  }
+
   /* Mobile: Leaflet zoom (+/-) — lower on screen (above bottom nav, easier to tap) */
   @media (max-width: 1023px) {
     .leaflet-top.leaflet-left {

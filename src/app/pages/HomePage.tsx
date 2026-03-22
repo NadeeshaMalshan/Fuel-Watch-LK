@@ -722,6 +722,7 @@ export function HomePage() {
             onBoundsChange={handleBoundsChange}
             userLocation={userLocation}
             variant={isMobile ? 'select' : 'popup'}
+            clusterByDistrict={viewportZoom < VIEWPORT_FILTER_MIN_ZOOM}
             className="w-full h-full"
           />
 
