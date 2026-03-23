@@ -274,12 +274,54 @@ export function StationDetailsPage() {
       return;
     }
 
+    const getFriendlyGeoError = (error: GeolocationPositionError) => {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          return t('submit.geoPermissionDenied');
+        case error.POSITION_UNAVAILABLE:
+          return t('submit.geoUnavailable');
+        case error.TIMEOUT:
+          return t('submit.geoTimeout');
+        default:
+          return t('submit.locationRequired');
+      }
+    };
+
     setIsSubmitting(true);
     try {
+      let userLat: number;
+      let userLng: number;
+      try {
+        if (!('geolocation' in navigator)) {
+          toast.error(t('submit.geoUnsupported'));
+          return;
+        }
+        if (!window.isSecureContext) {
+          toast.error(t('submit.httpsRequired'));
+          return;
+        }
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 30000,
+          });
+        });
+        userLat = pos.coords.latitude;
+        userLng = pos.coords.longitude;
+      } catch (geoErr) {
+        toast.error(
+          geoErr && typeof geoErr === 'object' && 'code' in geoErr
+            ? getFriendlyGeoError(geoErr as GeolocationPositionError)
+            : t('submit.locationRequired')
+        );
+        return;
+      }
+
       const response = await fetch(`${API_BASE}/stations/${id}/updates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, userLat, userLng }),
       });
 
       if (response.ok) {
@@ -290,9 +332,21 @@ export function StationDetailsPage() {
         // Refresh station data here if needed, or redirect
         navigate('/');
       } else {
-        toast.error('Failed to submit update');
+        let payload: { code?: string; error?: string } = {};
+        try {
+          payload = await response.json();
+        } catch {
+          /* ignore */
+        }
+        if (payload.code === 'TOO_FAR') {
+          toast.error(t('submit.tooFar'));
+        } else if (payload.code === 'LOCATION_REQUIRED') {
+          toast.error(t('submit.locationRequired'));
+        } else {
+          toast.error(payload.error || 'Failed to submit update');
+        }
       }
-    } catch (error) {
+    } catch {
       toast.error('Error submitting update');
     } finally {
       setIsSubmitting(false);

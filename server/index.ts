@@ -30,6 +30,26 @@ app.use(express.json({ limit: '50mb' })); // Allow large payloads for seeding
 
 const PORT = process.env.PORT || 3000;
 
+/** Max distance (meters) from station coordinates allowed to POST a community fuel update. */
+const MAX_UPDATE_DISTANCE_METERS = 300;
+
+function haversineDistanceMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 // Admin Authentication Middleware (JWT)
 const checkAdminAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -62,10 +82,56 @@ app.get('/api/stations', async (req, res) => {
 app.post('/api/stations/:id/updates', async (req, res) => {
   try {
     const stationId = parseInt(req.params.id);
-    const { userName, message, status, petrol92, petrol95, autoDiesel, superDiesel, kerosene, petrolQueueLength, petrolWaitingTime, dieselQueueLength, dieselWaitingTime } = req.body;
+    const {
+      userName,
+      message,
+      status,
+      petrol92,
+      petrol95,
+      autoDiesel,
+      superDiesel,
+      kerosene,
+      petrolQueueLength,
+      petrolWaitingTime,
+      dieselQueueLength,
+      dieselWaitingTime,
+      userLat,
+      userLng,
+    } = req.body;
 
     if (isNaN(stationId)) {
       return res.status(400).json({ error: 'Invalid station ID' });
+    }
+
+    const lat = typeof userLat === 'number' ? userLat : parseFloat(String(userLat ?? ''));
+    const lng = typeof userLng === 'number' ? userLng : parseFloat(String(userLng ?? ''));
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return res.status(400).json({
+        error: 'Valid userLat and userLng are required',
+        code: 'LOCATION_REQUIRED',
+      });
+    }
+
+    const [stationRow] = await db
+      .select({ lat: stations.lat, lng: stations.lng })
+      .from(stations)
+      .where(eq(stations.id, stationId))
+      .limit(1);
+
+    if (!stationRow) {
+      return res.status(404).json({ error: 'Station not found' });
+    }
+    if (stationRow.lat == null || stationRow.lng == null) {
+      return res.status(400).json({ error: 'Station has no map coordinates' });
+    }
+
+    const distanceM = haversineDistanceMeters(lat, lng, stationRow.lat, stationRow.lng);
+    if (distanceM > MAX_UPDATE_DISTANCE_METERS) {
+      return res.status(403).json({
+        error: `You must be within ${MAX_UPDATE_DISTANCE_METERS} m of the station to submit an update`,
+        code: 'TOO_FAR',
+        distanceMeters: Math.round(distanceM),
+      });
     }
 
     // Insert update log
