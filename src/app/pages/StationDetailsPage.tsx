@@ -517,9 +517,15 @@ export function StationDetailsPage() {
               onClick={() => {
                 if (!isUpdating) {
                   const trilingualMsg = 
-                    "Please update true details only. One wrong detail can affect everyone because all data is from the community.\n\n" +
-                    "කරුණාකර නිවැරදි තොරතුරු පමණක් යාවත්කාලීන කරන්න. එක් වැරදි විස්තරයක් හෝ සැමට බලපෑ හැකිය, මන්ද සියලුම දත්ත ප්රජාවෙන් ලබාගත් ඒවා බැවිනි.\n\n" +
-                    "தயவுசெய்து துல்லியமான விவரங்களை மட்டுமே பதிவேற்றவும். அனைத்து தரவுகளும் சமூகத்திலிருந்து பெறப்படுவதால், ஒரு தவறான விவரம் கூட அனைவரையும் பாதிக்கக்கூடும்.";
+                    "COMMUNITY GUIDELINES:\n" +
+                    "1. Please update true details only. One wrong detail affects everyone.\n" +
+                    "2. You MUST be within 300m from this particular fuel station to submit an update. This ensures that only those physically present can report fuel and queue status.\n\n" +
+                    "ප්‍රජා මාර්ගෝපදේශ:\n" +
+                    "1. කරුණාකර නිවැරදි තොරතුරු පමණක් යාවත්කාලීන කරන්න.\n" +
+                    "2. යාවත්කාලීන කිරීමක් කිරීමට ඔබ මෙම පිරවුම්හලේ සිට මීටර් 300ක් ඇතුළත සිටිය යුතුය. මෙයින් අදහස් කරන්නේ පෝලිම් සහ ඉන්ධන තොග පිළිබඳ තොරතුරු ලබාදිය හැක්කේ එම ස්ථානයේ සිටින අයට පමණක් බවයි.\n\n" +
+                    "சமூக வழிகாட்டுதல்கள்:\n" +
+                    "1. தயவுசெய்து துல்லியமான விவரங்களை மட்டுமே பதிவேற்றவும்.\n" +
+                    "2. புதுப்பிப்பைச் சமர்ப்பிக்க நீங்கள் இந்த குறிப்பிட்ட எரிபொருள் நிலையத்திலிருந்து 300 மீட்டருக்குள் இருக்க வேண்டும். வரிசை மற்றும் எரிபொருள் விபரங்களை அங்கிருப்பவர்கள் மட்டுமே வழங்க முடியும் என்பதை இது உறுதிப்படுத்துகிறது.";
                   alert(trilingualMsg);
                 }
                 setIsUpdating(!isUpdating);
