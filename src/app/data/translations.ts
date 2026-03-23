@@ -117,6 +117,13 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.errorFields': 'Please fill in all required fields',
     'submit.out': 'Out',
     'submit.notAvailable': 'N/A',
+    'submit.tooFar': 'You must be within 300 m of this station to submit an update. Move closer and try again.',
+    'submit.locationRequired': 'We need your location to confirm you are at the station. Enable location and try again.',
+    'submit.httpsRequired': 'Location needs HTTPS. Open the app via https:// or use localhost.',
+    'submit.geoUnsupported': 'Your browser does not support location.',
+    'submit.geoPermissionDenied': 'Location permission denied. Allow location access in your browser settings.',
+    'submit.geoUnavailable': 'Location unavailable. Turn on GPS and try again.',
+    'submit.geoTimeout': 'Location request timed out. Try again in an open area.',
 
     // PWA install (mobile, unobtrusive banner)
     'pwa.a11yRegion': 'Install app',
@@ -257,6 +264,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.errorFields': 'කරුණාකර අවශ්‍ය සියලුම තොරතුරු පුරවන්න',
     'submit.out': 'ඉවරයි',
     'submit.notAvailable': 'නැත',
+    'submit.tooFar':
+      'මෙම පිරවුම්හලට මීටර් 300 ඇතුළත සිටිය යුතුයි. ආසන්නයට ඇවිත් නැවත උත්සාහ කරන්න.',
+    'submit.locationRequired':
+      'ඔබ පිරවුම්හලේ සිටින බව තහවුරු කිරීමට ස්ථානය අවශ්‍යයි. ස්ථානය සක්‍රිය කර නැවත උත්සාහ කරන්න.',
+    'submit.httpsRequired': 'ස්ථානයට HTTPS අවශ්‍යයි. https:// හරහා හෝ localhost භාවිතා කරන්න.',
+    'submit.geoUnsupported': 'ඔබේ බ්‍රව්සරය ස්ථානය සඳහා සහාය නොදක්වයි.',
+    'submit.geoPermissionDenied':
+      'ස්ථාන අවසරය ප්‍රතික්ෂේප විය. බ්‍රව්සර සැකසුම්වල ස්ථානය සක්‍රිය කරන්න.',
+    'submit.geoUnavailable': 'ස්ථානය ලබා ගත නොහැක. GPS සක්‍රිය කර නැවත උත්සාහ කරන්න.',
+    'submit.geoTimeout': 'ස්ථාන ඉල්ලීම කාලය ඉකුත් විය. විවෘත තැනක නැවත උත්සාහ කරන්න.',
 
     'pwa.a11yRegion': 'යෙදුම ස්ථාපනය',
     'pwa.title': 'Fuel Alert ස්ථාපනය කරන්න',
@@ -397,6 +414,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'submit.errorFields': 'தயவுசெய்து தேவையான அனைத்து புலங்களையும் நிரப்பவும்',
     'submit.out': 'இல்லை',
     'submit.notAvailable': 'இல்லை',
+    'submit.tooFar':
+      'இந்த நிலையத்திலிருந்து 300 மீட்டருக்குள் இருக்கும்போது மட்டுமே புதுப்பிப்பை அனுப்ப முடியும். அருகில் சென்று மீண்டும் முயற்சிக்கவும்.',
+    'submit.locationRequired':
+      'நீங்கள் நிலையத்தில் இருப்பதை உறுதிப்படுத்த இருப்பிடம் தேவை. இருப்பிட அணுகலை இயக்கி மீண்டும் முயற்சிக்கவும்.',
+    'submit.httpsRequired':
+      'இருப்பிடத்திற்கு HTTPS தேவை. https:// வழியாக அல்லது localhost ஐப் பயன்படுத்தவும்.',
+    'submit.geoUnsupported': 'உங்கள் உலாவி இருப்பிடத்தை ஆதரிக்கவில்லை.',
+    'submit.geoPermissionDenied':
+      'இருப்பிட அனுமதி மறுக்கப்பட்டது. உலாவி அமைப்புகளில் இருப்பிடத்தை இயக்கவும்.',
+    'submit.geoUnavailable': 'இருப்பிடம் கிடைக்கவில்லை. GPS ஐ இயக்கி மீண்டும் முயற்சிக்கவும்.',
+    'submit.geoTimeout': 'இருப்பிட கோரிக்கை நேரம் முடிந்தது. திறந்த இடத்தில் மீண்டும் முயற்சிக்கவும்.',
 
     'pwa.a11yRegion': 'பயன்பாட்டை நிறுவுக',
     'pwa.title': 'Fuel Alert ஐ நிறுவுக',

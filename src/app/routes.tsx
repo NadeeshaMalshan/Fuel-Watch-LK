@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import { ModernLandingPage } from "./components/landing/ModernLandingPage";
 import { MainLayout } from "./layouts/MainLayout";
 import { HomePage } from "./pages/HomePage";
 import { StationDetailsPage } from "./pages/StationDetailsPage";
@@ -10,6 +11,7 @@ import { GuidePage } from "./pages/GuidePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
 export const router = createBrowserRouter([
+  { path: "/landing", Component: ModernLandingPage },
   {
     path: "/",
     Component: MainLayout,
