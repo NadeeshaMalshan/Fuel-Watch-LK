@@ -423,6 +423,10 @@ app.delete('/api/admin/stations/:id', checkAdminAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid ID' });
     }
 
+    // Delete related records first to avoid foreign key constraint errors
+    await db.delete(fuelUpdates).where(eq(fuelUpdates.stationId, id));
+    await db.delete(stationRequests).where(eq(stationRequests.stationId, id));
+
     await db.delete(stations).where(eq(stations.id, id));
     res.json({ success: true });
   } catch (error) {

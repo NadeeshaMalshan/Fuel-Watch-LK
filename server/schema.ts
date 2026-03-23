@@ -27,7 +27,7 @@ export const stations = pgTable('stations', {
 
 export const fuelUpdates = pgTable('fuel_updates', {
   id: serial('id').primaryKey(),
-  stationId: integer('station_id').references(() => stations.id),
+  stationId: integer('station_id').references(() => stations.id, { onDelete: 'cascade' }),
   userName: varchar('user_name', { length: 255 }),
   message: text('message'),
   status: varchar('status', { length: 50 }),
@@ -48,7 +48,7 @@ export const fuelUpdates = pgTable('fuel_updates', {
 export const stationRequests = pgTable('station_requests', {
   id: serial('id').primaryKey(),
   type: varchar('type', { length: 50 }).notNull(), // 'add_station' or 'update_station'
-  stationId: integer('station_id').references(() => stations.id),
+  stationId: integer('station_id').references(() => stations.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }),
   nameSi: varchar('name_si', { length: 255 }),
   nameTa: varchar('name_ta', { length: 255 }),
