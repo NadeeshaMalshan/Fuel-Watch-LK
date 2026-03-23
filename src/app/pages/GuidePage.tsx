@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Info, Search, ShieldAlert, Activity, Clock, TrendingUp, List } from 'lucide-react';
+import { ArrowLeft, Info, Search, ShieldAlert, Activity, Clock, TrendingUp, List, PlayCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { SEO } from '../components/SEO';
 
@@ -20,7 +20,7 @@ type GuideData = {
 };
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Search, List, Activity, Clock, TrendingUp, ShieldAlert,
+  Search, List, Activity, Clock, TrendingUp, ShieldAlert, PlayCircle
 };
 
 const guideContent: Record<string, GuideData> = {
@@ -28,6 +28,13 @@ const guideContent: Record<string, GuideData> = {
     title: 'How to Use Fuel Alert',
     subtitle: 'A step-by-step guide to finding fuel and contributing to the community',
     sections: [
+      {
+        id: 'demo',
+        iconName: 'PlayCircle',
+        title: 'System Walkthrough',
+        desc: 'Watch this short video to see how Fuel Alert works and how you can use its features effectively.',
+        bullets: []
+      },
       {
         id: 'find',
         iconName: 'Search',
@@ -75,7 +82,7 @@ const guideContent: Record<string, GuideData> = {
         desc: 'This app relies on people like you! When you are at a fuel station, please tell others what the situation is.',
         bullets: [
           'Click on the station you are currently visiting.',
-          'Click the "Update Status" button.',
+          'Click the "Update Status" button. Note: To ensure accuracy, only community members who are physically present (within 300m from that particular fuel station) can update fuel and queue status.',
           'Enter how many vehicles are in the queue, how long you waited, and if fuel is still Available or Out of Stock.',
           'Click "Submit" – your update will instantly help thousands of other drivers!'
         ]
@@ -102,6 +109,13 @@ const guideContent: Record<string, GuideData> = {
     title: 'Fuel Alert භාවිතා කරන්නේ කෙසේද',
     subtitle: 'ඉන්ධන සොයා ගැනීම සහ ප්‍රජාවට දායක වීම සඳහා පියවරෙන් පියවර මාර්ගෝපදේශය',
     sections: [
+      {
+        id: 'demo',
+        iconName: 'PlayCircle',
+        title: 'පද්ධති හැඳින්වීම (Video)',
+        desc: 'Fuel Alert භාවිතා කරන ආකාරය සහ එහි විශේෂාංග පිළිබඳව මෙම කෙටි වීඩියෝවෙන් නරඹන්න.',
+        bullets: []
+      },
       {
         id: 'find',
         iconName: 'Search',
@@ -149,7 +163,7 @@ const guideContent: Record<string, GuideData> = {
         desc: 'මෙම යෙදුම රඳා පවතින්නේ ඔබ වැනි අය මතයි! ඔබ පිරවුම්හලක සිටින විට, කරුණාකර වෙනත් අයට ඒ බව දන්වන්න.',
         bullets: [
           'ඔබ දැනට සිටින පිරවුම්හල මත ක්ලික් කරන්න.',
-          '"Update Status" බොත්තම ක්ලික් කරන්න.',
+          '"Update Status" බොත්තම ක්ලික් කරන්න. (පෝලිම් වල දිග සහ ඉන්ධන තොග පිළිබඳ තොරතුරු අදාළ පිරවුම්හලේ සිටින ප්‍රජා සාමාජිකයින් විසින්ම ලබාදෙන බව තහවුරු කිරීමට, යාවත්කාලීන කිරීමක් සඳහා ඔබ එම පිරවුම්හලේ සිට මීටර් 300ක් ඇතුළත සිටිය යුතුය)',
           'පෝලිමේ වාහන කීයක් දැයි, කොපමණ වේලාවක් බලා සිටියාද සහ ඉන්ධන තවමත් තිබේද (Available) නැතිද (Out of Stock) යන්න ඇතුළත් කරන්න.',
           '"Submit" ක්ලික් කරන්න - ඔබේ යාවත්කාලීන කිරීම ක්ෂණිකව අනෙකුත් රියදුරන් දහස් ගණනකට උපකාරී වනු ඇත!'
         ]
@@ -176,6 +190,13 @@ const guideContent: Record<string, GuideData> = {
     title: 'Fuel Alert பயன்படுத்துவது எப்படி',
     subtitle: 'எரிபொருளைக் கண்டறிவதற்கும் சமூகத்திற்கு பங்களிப்பதற்கும் படிப்படியான வழிகாட்டி',
     sections: [
+      {
+        id: 'demo',
+        iconName: 'PlayCircle',
+        title: 'முறைமை விளக்கம் (Video)',
+        desc: 'Fuel Alert எவ்வாறு செயல்படுகிறது மற்றும் அதன் அம்சங்களை எவ்வாறு திறம்பட பயன்படுத்துவது என்பதை இந்த குறுகிய வீடியோவில் பாருங்கள்.',
+        bullets: []
+      },
       {
         id: 'find',
         iconName: 'Search',
@@ -223,7 +244,7 @@ const guideContent: Record<string, GuideData> = {
         desc: 'இந்தப் பயன்பாடு உங்களைப் போன்றவர்களைச் சார்ந்திருக்கிறது! நீங்கள் எரிபொருள் நிலையத்தில் இருக்கும்போது, மற்றவர்களுக்கு நிலைமையை தெரிவிக்கவும்.',
         bullets: [
           'நீங்கள் தற்போது பார்வையிடும் நிலையத்தைக் கிளிக் செய்யவும்.',
-          '"Update Status" பொத்தானைக் கிளிக் செய்யவும்.',
+          '"Update Status" பொத்தானைக் கிளிக் செய்யவும். (வரிசையின் நீளம் மற்றும் எரிபொருள் இருப்பு ஆகியவை குறிப்பிட்ட எரிபொருள் நிலையத்தில் இருக்கும் சமூக உறுப்பினர்களால் மட்டுமே அறிவிக்கப்படுவதை உறுதி செய்ய, நீங்கள் அந்த நிலையத்திலிருந்து 300 மீட்டருக்குள் இருக்க வேண்டும்)',
           'வரிசையில் எத்தனை வாகனங்கள் உள்ளன, நீங்கள் எவ்வளவு நேரம் காத்திருந்தீர்கள் மற்றும் எரிபொருள் இன்னும் உள்ளதா (Available) அல்லது காலியாகிவிட்டதா (Out of Stock) என்பதை உள்ளிடவும்.',
           '"Submit" என்பதைக் கிளிக் செய்யவும் - உங்கள் புதுப்பிப்பு உடனடியாக ஆயிரக்கணக்கான பிற ஓட்டுநர்களுக்கு உதவும்!'
         ]
@@ -364,6 +385,7 @@ export function GuidePage() {
               return (
                 <div
                   key={section.id}
+                  id={section.id}
                   className={`rounded-3xl border overflow-hidden transition-colors shadow-sm duration-500 ${
                     isDark ? 'bg-card/40 border-gray-800' : 'bg-white border-gray-200'
                   }`}
@@ -383,6 +405,20 @@ export function GuidePage() {
                     <p className={`text-base font-medium mb-5 leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>
                       {section.desc}
                     </p>
+
+                    {/* Video Player for Demo Section */}
+                    {section.id === 'demo' && (
+                      <div className={`mt-4 rounded-2xl overflow-hidden border shadow-inner ${isDark ? 'bg-black/40 border-gray-800' : 'bg-gray-100 border-gray-200'}`}>
+                        <video 
+                          controls 
+                          className="w-full aspect-video"
+                          poster="/favicon.svg"
+                        >
+                          <source src="/videos/demo.mp4" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    )}
 
                     {/* Standard Bullets */}
                     {section.bullets.length > 0 && (
